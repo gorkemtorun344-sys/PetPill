@@ -13,6 +13,7 @@ import EmptyState from '../components/EmptyState';
 import * as DB from '../database/database';
 import { t } from '../i18n/i18n';
 import { playTap } from '../utils/sounds';
+import { logError } from '../utils/logger';
 
 const PetsScreen = ({ navigation }) => {
   const { pets, loadPets, language } = useApp();
@@ -34,7 +35,7 @@ const PetsScreen = ({ navigation }) => {
         counts[pet.id] = meds.length;
       }
       setPetMedCounts(counts);
-    } catch (e) { console.error(e); }
+    } catch (e) { logError('Error loading pet medication counts', e); }
   };
 
   const onRefresh = async () => {

@@ -3,6 +3,7 @@ import * as DB from '../database/database';
 import { rescheduleAllMedications } from '../utils/notifications';
 import { setLanguage, getLanguage } from '../i18n/i18n';
 import { setSoundEnabled, isSoundEnabled } from '../utils/sounds';
+import { logError } from '../utils/logger';
 
 const AppContext = createContext();
 
@@ -42,7 +43,7 @@ export const AppProvider = ({ children }) => {
         setSoundEnabled(enabled);
       }
     } catch (e) {
-      console.error('Error loading settings:', e);
+      logError('Error loading settings:', e);
     }
   };
 
@@ -53,7 +54,7 @@ export const AppProvider = ({ children }) => {
     try {
       await DB.setSetting('language', langCode);
     } catch (e) {
-      console.error('Error saving language:', e);
+      logError('Error saving language:', e);
     }
   };
 
@@ -64,7 +65,7 @@ export const AppProvider = ({ children }) => {
     try {
       await DB.setSetting('sound_enabled', newVal.toString());
     } catch (e) {
-      console.error('Error saving sound setting:', e);
+      logError('Error saving sound setting:', e);
     }
   };
 
@@ -73,7 +74,7 @@ export const AppProvider = ({ children }) => {
     try {
       await DB.setSetting('is_premium', 'true');
     } catch (e) {
-      console.error('Error saving premium:', e);
+      logError('Error saving premium:', e);
     }
   };
 
@@ -85,7 +86,7 @@ export const AppProvider = ({ children }) => {
         setActivePet(allPets[0]);
       }
     } catch (e) {
-      console.error('Error loading pets:', e);
+      logError('Error loading pets:', e);
     }
   }, [activePet]);
 
@@ -96,7 +97,7 @@ export const AppProvider = ({ children }) => {
       const schedule = await DB.getMedicationLogsForDate(today);
       setTodaySchedule(schedule);
     } catch (e) {
-      console.error('Error loading schedule:', e);
+      logError('Error loading schedule:', e);
     }
   }, []);
 
@@ -105,7 +106,7 @@ export const AppProvider = ({ children }) => {
       const stats = await DB.getDashboardStats();
       setDashboardStats(stats);
     } catch (e) {
-      console.error('Error loading stats:', e);
+      logError('Error loading stats:', e);
     }
   }, []);
 
@@ -126,7 +127,7 @@ export const AppProvider = ({ children }) => {
         const allMeds = await DB.getAllActiveMedications();
         await rescheduleAllMedications(allMeds, allPets);
       } catch (e) {
-        console.error('Reschedule error:', e);
+        logError('Reschedule error:', e);
       }
     };
     scheduleOnStart();
@@ -144,7 +145,7 @@ export const AppProvider = ({ children }) => {
       await loadTodaySchedule();
       await loadDashboardStats();
     } catch (e) {
-      console.error('Error marking medication:', e);
+      logError('Error marking medication:', e);
     }
   };
 

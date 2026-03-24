@@ -325,4 +325,6 @@ export default {
   snooze: 'Отложить',
   for_pet: 'Для:',
   with_food_label: 'С едой',
+  privacy_policy: 'Политика конфиденциальности',
+  privacy_policy_desc: 'Как мы обрабатываем ваши данные',
 };

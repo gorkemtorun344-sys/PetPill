@@ -11,6 +11,7 @@ import { useApp } from '../context/AppContext';
 import * as DB from '../database/database';
 import { t } from '../i18n/i18n';
 import { playSuccess, playTap } from '../utils/sounds';
+import { logError } from '../utils/logger';
 
 const AddPetScreen = ({ navigation, route }) => {
   const editPet = route?.params?.pet;
@@ -87,7 +88,7 @@ const AddPetScreen = ({ navigation, route }) => {
       );
     } catch (e) {
       Alert.alert(t('error'), t('something_went_wrong'));
-      console.error(e);
+      logError('Error saving pet', e);
     } finally { setSaving(false); }
   };
 

@@ -356,4 +356,6 @@ export default {
   snooze: 'Posponer',
   for_pet: 'Para:',
   with_food_label: 'Con comida',
+  privacy_policy: 'Política de Privacidad',
+  privacy_policy_desc: 'Cómo manejamos tus datos',
 };

@@ -13,6 +13,7 @@ import EmptyState from '../components/EmptyState';
 import * as DB from '../database/database';
 import { t } from '../i18n/i18n';
 import { playSuccess, playMedGiven, playTap } from '../utils/sounds';
+import { logError } from '../utils/logger';
 
 const HomeScreen = ({ navigation }) => {
   const {
@@ -42,7 +43,7 @@ const HomeScreen = ({ navigation }) => {
       const refills = await DB.getMedicationsNeedingRefill();
       setRefillAlerts(refills);
     } catch (e) {
-      console.error(e);
+      logError('Error loading home screen data', e);
     }
   };
 

@@ -12,6 +12,7 @@ import * as DB from '../database/database';
 import { scheduleNotificationsForMedication } from '../utils/notifications';
 import { t } from '../i18n/i18n';
 import { playSuccess, playTap } from '../utils/sounds';
+import { logError } from '../utils/logger';
 
 const AddMedicationScreen = ({ navigation, route }) => {
   const preselectedPetId = route?.params?.petId;
@@ -74,7 +75,7 @@ const AddMedicationScreen = ({ navigation, route }) => {
       Alert.alert(`${t('medication_added')} 💊`, t('reminders_scheduled'), [{ text: `${t('great')} ✨`, onPress: () => navigation.goBack() }]);
     } catch (e) {
       Alert.alert(t('error'), t('failed_save_med'));
-      console.error(e);
+      logError('Error saving medication', e);
     } finally { setSaving(false); }
   };
 

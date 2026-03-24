@@ -325,4 +325,6 @@ export default {
   snooze: 'Schlummern',
   for_pet: 'Für:',
   with_food_label: 'Mit Futter',
+  privacy_policy: 'Datenschutzrichtlinie',
+  privacy_policy_desc: 'Wie wir Ihre Daten behandeln',
 };

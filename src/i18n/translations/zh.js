@@ -356,4 +356,6 @@ export default {
   snooze: '稍后提醒',
   for_pet: '对象：',
   with_food_label: '随食物',
+  privacy_policy: '隐私政策',
+  privacy_policy_desc: '我们如何处理您的数据',
 };

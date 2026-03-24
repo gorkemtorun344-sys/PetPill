@@ -356,4 +356,6 @@ export default {
   snooze: 'تأجيل',
   for_pet: 'لـ:',
   with_food_label: 'مع الطعام',
+  privacy_policy: 'سياسة الخصوصية',
+  privacy_policy_desc: 'كيف نتعامل مع بياناتك',
 };

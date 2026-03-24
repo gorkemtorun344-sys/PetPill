@@ -13,6 +13,9 @@ import * as DB from '../database/database';
 import { t } from '../i18n/i18n';
 import { LANGUAGES } from '../i18n/i18n';
 import { playSuccess, playPremium, playTap } from '../utils/sounds';
+import { logError } from '../utils/logger';
+
+const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.petpill.app';
 
 const SettingsScreen = ({ navigation }) => {
   const { isPremium, activatePremium, pets, refreshAll, language, changeLanguage, soundOn, toggleSound } = useApp();
@@ -33,7 +36,7 @@ const SettingsScreen = ({ navigation }) => {
     try {
       const cgs = await DB.getCaregivers();
       setCaregivers(cgs);
-    } catch (e) { console.error(e); }
+    } catch (e) { logError('Error loading caregivers', e); }
   };
 
   const handleAddCaregiver = async () => {
@@ -55,7 +58,7 @@ const SettingsScreen = ({ navigation }) => {
       await loadCaregivers();
       playSuccess();
       Alert.alert(`${t('caregiver_added')} 👨‍👩‍👧`, `${cgName} ${t('has_been_added')}`);
-    } catch (e) { console.error(e); }
+    } catch (e) { logError('Error adding caregiver', e); }
   };
 
   const handleDeleteCaregiver = (cg) => {
@@ -83,7 +86,7 @@ const SettingsScreen = ({ navigation }) => {
       await Share.share({
         message: `${t('share_message')} 🐾💊`,
       });
-    } catch (e) { console.error(e); }
+    } catch (e) { logError('Error sharing app', e); }
   };
 
   const handleExportData = () => {
@@ -277,12 +280,23 @@ const SettingsScreen = ({ navigation }) => {
         </View>
       </CuteCard>
 
-      <CuteCard>
+      <CuteCard onPress={() => Linking.openURL(PLAY_STORE_URL).catch(() => {})}>
         <View style={styles.menuItem}>
           <Text style={styles.menuEmoji}>⭐</Text>
           <View style={{ flex: 1 }}>
             <Text style={styles.menuTitle}>{t('rate_petpill')}</Text>
             <Text style={styles.menuDesc}>{t('help_more_pets')}</Text>
+          </View>
+          <Text style={styles.menuArrow}>›</Text>
+        </View>
+      </CuteCard>
+
+      <CuteCard onPress={() => navigation.navigate('PrivacyPolicy')}>
+        <View style={styles.menuItem}>
+          <Text style={styles.menuEmoji}>🔒</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.menuTitle}>{t('privacy_policy')}</Text>
+            <Text style={styles.menuDesc}>{t('privacy_policy_desc')}</Text>
           </View>
           <Text style={styles.menuArrow}>›</Text>
         </View>

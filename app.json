@@ -3,6 +3,7 @@
     "name": "PetPill",
     "slug": "PetPill",
     "version": "1.2.0",
+    "description": "PetPill helps pet parents track medications, health records, vaccinations, and vet appointments for their furry friends. Set reminders, compare medication prices, and never miss a dose again!",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -11,19 +12,11 @@
       "resizeMode": "contain",
       "backgroundColor": "#FFF8FA"
     },
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.petpill.app",
-      "infoPlist": {
-        "NSCameraUsageDescription": "PetPill needs camera access to take photos of your pets and medications.",
-        "NSPhotoLibraryUsageDescription": "PetPill needs photo library access to add photos of your pets.",
-        "NSLocationWhenInUseUsageDescription": "PetPill uses your location to find nearby veterinary clinics."
-      }
-    },
     "android": {
       "package": "com.petpill.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
         "backgroundColor": "#FFF8FA"
       },
       "permissions": [
@@ -35,10 +28,10 @@
         "android.permission.SCHEDULE_EXACT_ALARM",
         "android.permission.POST_NOTIFICATIONS"
       ],
-      "versionCode": 2
+      "versionCode": 2,
+      "googleServicesFile": "./google-services.json"
     },
     "platforms": [
-      "ios",
       "android"
     ],
     "plugins": [
@@ -55,7 +48,8 @@
     "extra": {
       "eas": {
         "projectId": "7d277d41-184c-4e4c-b8e0-c666c9c3589f"
-      }
+      },
+      "privacyPolicyUrl": "https://petpill.app/privacy"
     }
   }
 }

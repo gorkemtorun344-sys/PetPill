@@ -13,6 +13,7 @@ import EmptyState from '../components/EmptyState';
 import * as DB from '../database/database';
 import { t } from '../i18n/i18n';
 import { playTap, playSuccess } from '../utils/sounds';
+import { logError } from '../utils/logger';
 
 const SYMPTOM_OPTIONS = [
   { id: 'vomiting', emoji: '🤮' },
@@ -67,7 +68,7 @@ const HealthTrackerScreen = ({ navigation }) => {
       setHealthLogs(h);
       const v = await DB.getVaccinations(activePet.id);
       setVaccinations(v);
-    } catch (e) { console.error(e); }
+    } catch (e) { logError('Error loading health data', e); }
   };
 
   const onRefresh = async () => {
@@ -94,7 +95,7 @@ const HealthTrackerScreen = ({ navigation }) => {
       await loadData();
       playSuccess();
       Alert.alert(`${t('weight_recorded')} ⚖️`, t('weight_logged'));
-    } catch (e) { console.error(e); }
+    } catch (e) { logError('Error adding weight log', e); }
   };
 
   const handleLogSymptoms = async () => {
@@ -117,7 +118,7 @@ const HealthTrackerScreen = ({ navigation }) => {
       await loadData();
       playSuccess();
       Alert.alert(`${t('symptoms_logged')} 📋`, t('symptoms_recorded'));
-    } catch (e) { console.error(e); }
+    } catch (e) { logError('Error logging symptoms', e); }
   };
 
   const handleAddVaccination = async () => {
@@ -137,7 +138,7 @@ const HealthTrackerScreen = ({ navigation }) => {
       await loadData();
       playSuccess();
       Alert.alert(`${t('vaccination_recorded')} 💉`, t('vaccination_logged'));
-    } catch (e) { console.error(e); }
+    } catch (e) { logError('Error adding vaccination', e); }
   };
 
   const toggleSymptom = (id) => {

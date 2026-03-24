@@ -10,6 +10,7 @@ import CuteButton from '../components/CuteButton';
 import * as DB from '../database/database';
 import { t } from '../i18n/i18n';
 import { useApp } from '../context/AppContext';
+import { logError } from '../utils/logger';
 
 const PetDetailScreen = ({ navigation, route }) => {
   const { petId } = route.params;
@@ -29,7 +30,7 @@ const PetDetailScreen = ({ navigation, route }) => {
       const vacs = await DB.getVaccinations(petId); setVaccinations(vacs);
       const weights = await DB.getWeightLogs(petId); setWeightLogs(weights.slice(0, 5));
       const s = await DB.getStreak(petId); setStreak(s);
-    } catch (e) { console.error(e); }
+    } catch (e) { logError('Error loading pet details', e); }
   };
 
   if (!pet) return <View style={styles.container}><Text style={{ textAlign: 'center', marginTop: 50, color: COLORS.textLight }}>{t('loading')}</Text></View>;

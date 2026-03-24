@@ -12,6 +12,7 @@ import CuteButton from '../components/CuteButton';
 import EmptyState from '../components/EmptyState';
 import * as DB from '../database/database';
 import { t } from '../i18n/i18n';
+import { logError } from '../utils/logger';
 
 const MedicationsScreen = ({ navigation }) => {
   const { pets, language } = useApp();
@@ -27,7 +28,7 @@ const MedicationsScreen = ({ navigation }) => {
       const meds = await DB.getAllActiveMedications();
       setMedications(meds);
       checkInteractions(meds);
-    } catch (e) { console.error(e); }
+    } catch (e) { logError('Error loading medications', e); }
   };
 
   const checkInteractions = (meds) => {

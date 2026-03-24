@@ -356,4 +356,6 @@ export default {
   snooze: 'Ertele',
   for_pet: 'İçin:',
   with_food_label: 'Yiyecekle',
+  privacy_policy: 'Gizlilik Politikası',
+  privacy_policy_desc: 'Verilerinizi nasıl yönetiyoruz',
 };
