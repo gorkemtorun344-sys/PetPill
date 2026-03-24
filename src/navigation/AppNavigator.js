@@ -3,6 +3,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { View, Text, StyleSheet } from 'react-native';
 import { COLORS, FONTS, SHADOWS } from '../constants/theme';
+import { t } from '../i18n/i18n';
+import { useApp } from '../context/AppContext';
 
 // Screens
 import HomeScreen from '../screens/HomeScreen';
@@ -30,7 +32,7 @@ const defaultScreenOptions = {
     fontWeight: '700',
     fontSize: FONTS.sizes.xl,
   },
-  headerBackTitle: 'Back',
+  headerBackTitle: t('back'),
   cardStyle: { backgroundColor: COLORS.background },
 };
 
@@ -49,14 +51,14 @@ const PetsStack = () => (
       name="AddPet"
       component={AddPetScreen}
       options={({ route }) => ({
-        title: route.params?.pet ? '✏️ Edit Pet' : '🐾 Add Pet',
-        headerBackTitle: 'Back',
+        title: route.params?.pet ? `✏️ ${t('edit_pet')}` : `🐾 ${t('add_pet')}`,
+        headerBackTitle: t('back'),
       })}
     />
     <Stack.Screen
       name="PetDetail"
       component={PetDetailScreen}
-      options={{ title: '🐾 Pet Profile', headerBackTitle: 'Back' }}
+      options={{ title: `🐾 ${t('pet_profile')}`, headerBackTitle: t('back') }}
     />
   </Stack.Navigator>
 );
@@ -67,7 +69,7 @@ const MedicationsStack = () => (
     <Stack.Screen
       name="AddMedication"
       component={AddMedicationScreen}
-      options={{ title: '💊 Add Medication', headerBackTitle: 'Back' }}
+      options={{ title: `💊 ${t('add_medication_btn')}`, headerBackTitle: t('back') }}
     />
   </Stack.Navigator>
 );
@@ -102,6 +104,8 @@ const TabIcon = ({ emoji, label, focused }) => (
 // ==================== MAIN NAVIGATOR ====================
 
 const AppNavigator = () => {
+  const { language } = useApp();
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -116,42 +120,42 @@ const AppNavigator = () => {
         name="HomeTab"
         component={HomeStack}
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon emoji="🏠" label="Home" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon emoji="🏠" label={t('home')} focused={focused} />,
         }}
       />
       <Tab.Screen
         name="PetsTab"
         component={PetsStack}
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon emoji="🐾" label="Pets" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon emoji="🐾" label={t('pets')} focused={focused} />,
         }}
       />
       <Tab.Screen
         name="MedsTab"
         component={MedicationsStack}
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon emoji="💊" label="Meds" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon emoji="💊" label={t('meds')} focused={focused} />,
         }}
       />
       <Tab.Screen
         name="PriceTab"
         component={PriceStack}
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon emoji="💰" label="Prices" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon emoji="💰" label={t('prices')} focused={focused} />,
         }}
       />
       <Tab.Screen
         name="HealthTab"
         component={HealthStack}
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon emoji="📊" label="Health" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon emoji="📊" label={t('health')} focused={focused} />,
         }}
       />
       <Tab.Screen
         name="SettingsTab"
         component={SettingsStack}
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon emoji="⚙️" label="More" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon emoji="⚙️" label={t('more')} focused={focused} />,
         }}
       />
     </Tab.Navigator>

@@ -8,13 +8,15 @@ import { AppProvider } from './src/context/AppContext';
 import AppNavigator from './src/navigation/AppNavigator';
 import { requestNotificationPermissions } from './src/utils/notifications';
 import { getDatabase } from './src/database/database';
+import { initAudio } from './src/utils/sounds';
 import { COLORS, FONTS } from './src/constants/theme';
+import { t } from './src/i18n/i18n';
 
 const LoadingScreen = () => (
   <View style={styles.loadingContainer}>
     <Text style={styles.loadingEmoji}>💊🐾</Text>
     <Text style={styles.loadingTitle}>PetPill</Text>
-    <Text style={styles.loadingSubtitle}>Caring for your pets, one pill at a time</Text>
+    <Text style={styles.loadingSubtitle}>{t('loading_subtitle')}</Text>
     <ActivityIndicator size="large" color={COLORS.primary} style={styles.spinner} />
   </View>
 );
@@ -33,6 +35,9 @@ export default function App() {
 
       // Request notification permissions
       await requestNotificationPermissions();
+
+      // Initialize audio for sound effects
+      await initAudio();
 
       // Small delay for splash feel
       await new Promise(resolve => setTimeout(resolve, 800));

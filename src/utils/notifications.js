@@ -51,11 +51,11 @@ export const requestNotificationPermissions = async () => {
 export const scheduleMedicationReminder = async (medication, pet, time, date) => {
   const [hours, minutes] = time.split(':').map(Number);
 
-  const trigger = new Date(date);
-  trigger.setHours(hours, minutes, 0, 0);
+  const triggerDate = new Date(date);
+  triggerDate.setHours(hours, minutes, 0, 0);
 
   // Don't schedule if in the past
-  if (trigger <= new Date()) return null;
+  if (triggerDate <= new Date()) return null;
 
   const id = await Notifications.scheduleNotificationAsync({
     content: {
@@ -69,7 +69,10 @@ export const scheduleMedicationReminder = async (medication, pet, time, date) =>
       sound: 'default',
       ...(Platform.OS === 'android' && { channelId: 'medications' }),
     },
-    trigger,
+    trigger: {
+      type: 'date',
+      date: triggerDate,
+    },
   });
 
   return id;
@@ -89,6 +92,7 @@ export const scheduleRefillReminder = async (medication, pet) => {
       ...(Platform.OS === 'android' && { channelId: 'refills' }),
     },
     trigger: {
+      type: 'timeInterval',
       seconds: 1,
     },
   });
@@ -117,7 +121,10 @@ export const scheduleAppointmentReminder = async (appointment, pet) => {
         sound: 'default',
         ...(Platform.OS === 'android' && { channelId: 'appointments' }),
       },
-      trigger: dayBefore,
+      trigger: {
+        type: 'date',
+        date: dayBefore,
+      },
     });
   }
 
@@ -138,7 +145,10 @@ export const scheduleAppointmentReminder = async (appointment, pet) => {
         sound: 'default',
         ...(Platform.OS === 'android' && { channelId: 'appointments' }),
       },
-      trigger: morningOf,
+      trigger: {
+        type: 'date',
+        date: morningOf,
+      },
     });
   }
 };
@@ -192,11 +202,11 @@ export const scheduleNotificationsForMedication = async (medication, pet) => {
 
     for (const time of times) {
       const [hours, minutes] = time.split(':').map(Number);
-      const trigger = new Date(targetDate);
-      trigger.setHours(hours, minutes, 0, 0);
+      const triggerDate = new Date(targetDate);
+      triggerDate.setHours(hours, minutes, 0, 0);
 
       // Skip if already past
-      if (trigger <= new Date()) continue;
+      if (triggerDate <= new Date()) continue;
 
       try {
         const id = await Notifications.scheduleNotificationAsync({
@@ -208,7 +218,10 @@ export const scheduleNotificationsForMedication = async (medication, pet) => {
             sound: 'default',
             ...(Platform.OS === 'android' && { channelId: 'medications' }),
           },
-          trigger,
+          trigger: {
+            type: 'date',
+            date: triggerDate,
+          },
         });
         scheduledIds.push(id);
       } catch (e) {
