@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "PetPill",
+    "slug": "PetPill",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFF8FA"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.petpill.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "PetPill needs camera access to take photos of your pets and medications.",
+        "NSPhotoLibraryUsageDescription": "PetPill needs photo library access to add photos of your pets.",
+        "NSLocationWhenInUseUsageDescription": "PetPill uses your location to find nearby veterinary clinics."
+      }
+    },
+    "android": {
+      "package": "com.petpill.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundColor": "#FFF8FA"
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.VIBRATE",
+        "android.permission.RECEIVE_BOOT_COMPLETED"
+      ]
+    },
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "plugins": [
+      "expo-notifications",
+      "expo-image-picker",
+      "expo-location"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "7d277d41-184c-4e4c-b8e0-c666c9c3589f"
+      }
+    }
+  }
+}
