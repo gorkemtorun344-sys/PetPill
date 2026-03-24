@@ -28,8 +28,7 @@
         "android.permission.SCHEDULE_EXACT_ALARM",
         "android.permission.POST_NOTIFICATIONS"
       ],
-      "versionCode": 2,
-      "googleServicesFile": "./google-services.json"
+      "versionCode": 2
     },
     "platforms": [
       "android"
