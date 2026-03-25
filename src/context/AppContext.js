@@ -1,6 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import * as DB from '../database/database';
 import { rescheduleAllMedications } from '../utils/notifications';
+import { setLanguage, getLanguage } from '../i18n/i18n';
+import { setSoundEnabled, isSoundEnabled } from '../utils/sounds';
+import { logError } from '../utils/logger';
 
 const AppContext = createContext();
 
@@ -13,6 +16,67 @@ export const AppProvider = ({ children }) => {
   const [dashboardStats, setDashboardStats] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isPremium, setIsPremium] = useState(false);
+  const [language, setLang] = useState('en');
+  const [soundOn, setSoundOn] = useState(true);
+  const [, forceUpdate] = useState(0);
+
+  // Load saved settings on mount
+  useEffect(() => {
+    loadSettings();
+  }, []);
+
+  const loadSettings = async () => {
+    try {
+      const savedLang = await DB.getSetting('language');
+      if (savedLang) {
+        setLang(savedLang);
+        setLanguage(savedLang);
+      }
+      const savedPremium = await DB.getSetting('is_premium');
+      if (savedPremium === 'true') {
+        setIsPremium(true);
+      }
+      const savedSound = await DB.getSetting('sound_enabled');
+      if (savedSound !== null) {
+        const enabled = savedSound !== 'false';
+        setSoundOn(enabled);
+        setSoundEnabled(enabled);
+      }
+    } catch (e) {
+      logError('Error loading settings:', e);
+    }
+  };
+
+  const changeLanguage = async (langCode) => {
+    setLang(langCode);
+    setLanguage(langCode);
+    forceUpdate(n => n + 1);
+    try {
+      await DB.setSetting('language', langCode);
+    } catch (e) {
+      logError('Error saving language:', e);
+    }
+  };
+
+  const toggleSound = async () => {
+    const newVal = !soundOn;
+    setSoundOn(newVal);
+    setSoundEnabled(newVal);
+    try {
+      await DB.setSetting('sound_enabled', newVal.toString());
+    } catch (e) {
+      logError('Error saving sound setting:', e);
+    }
+  };
+
+  const activatePremium = async () => {
+    setIsPremium(true);
+    try {
+      await DB.setSetting('is_premium', 'true');
+    } catch (e) {
+      logError('Error saving premium:', e);
+    }
+  };
 
   const loadPets = useCallback(async () => {
     try {
@@ -22,7 +86,7 @@ export const AppProvider = ({ children }) => {
         setActivePet(allPets[0]);
       }
     } catch (e) {
-      console.error('Error loading pets:', e);
+      logError('Error loading pets:', e);
     }
   }, [activePet]);
 
@@ -33,7 +97,7 @@ export const AppProvider = ({ children }) => {
       const schedule = await DB.getMedicationLogsForDate(today);
       setTodaySchedule(schedule);
     } catch (e) {
-      console.error('Error loading schedule:', e);
+      logError('Error loading schedule:', e);
     }
   }, []);
 
@@ -42,7 +106,7 @@ export const AppProvider = ({ children }) => {
       const stats = await DB.getDashboardStats();
       setDashboardStats(stats);
     } catch (e) {
-      console.error('Error loading stats:', e);
+      logError('Error loading stats:', e);
     }
   }, []);
 
@@ -63,7 +127,7 @@ export const AppProvider = ({ children }) => {
         const allMeds = await DB.getAllActiveMedications();
         await rescheduleAllMedications(allMeds, allPets);
       } catch (e) {
-        console.error('Reschedule error:', e);
+        logError('Reschedule error:', e);
       }
     };
     scheduleOnStart();
@@ -81,7 +145,7 @@ export const AppProvider = ({ children }) => {
       await loadTodaySchedule();
       await loadDashboardStats();
     } catch (e) {
-      console.error('Error marking medication:', e);
+      logError('Error marking medication:', e);
     }
   };
 
@@ -94,11 +158,16 @@ export const AppProvider = ({ children }) => {
     isLoading,
     isPremium,
     setIsPremium,
+    activatePremium,
     loadPets,
     loadTodaySchedule,
     loadDashboardStats,
     refreshAll,
     markMedication,
+    language,
+    changeLanguage,
+    soundOn,
+    toggleSound,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

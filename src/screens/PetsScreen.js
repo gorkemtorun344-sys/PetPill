@@ -11,9 +11,12 @@ import PetAvatar from '../components/PetAvatar';
 import CuteButton from '../components/CuteButton';
 import EmptyState from '../components/EmptyState';
 import * as DB from '../database/database';
+import { t } from '../i18n/i18n';
+import { playTap } from '../utils/sounds';
+import { logError } from '../utils/logger';
 
 const PetsScreen = ({ navigation }) => {
-  const { pets, loadPets } = useApp();
+  const { pets, loadPets, language } = useApp();
   const [refreshing, setRefreshing] = useState(false);
   const [petMedCounts, setPetMedCounts] = useState({});
 
@@ -32,9 +35,7 @@ const PetsScreen = ({ navigation }) => {
         counts[pet.id] = meds.length;
       }
       setPetMedCounts(counts);
-    } catch (e) {
-      console.error(e);
-    }
+    } catch (e) { logError('Error loading pet medication counts', e); }
   };
 
   const onRefresh = async () => {
@@ -46,12 +47,12 @@ const PetsScreen = ({ navigation }) => {
 
   const handleDeletePet = (pet) => {
     Alert.alert(
-      `Delete ${pet.name}? 😢`,
-      'This will remove all their medications, health records, and appointments. This cannot be undone.',
+      `${t('delete')} ${pet.name}? 😢`,
+      t('delete_pet_msg'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('delete'),
           style: 'destructive',
           onPress: async () => {
             await DB.deletePet(pet.id);
@@ -67,9 +68,9 @@ const PetsScreen = ({ navigation }) => {
       <View style={styles.container}>
         <EmptyState
           emoji="🐾"
-          title="No Pets Yet"
-          message="Add your first furry (or scaly) friend to start tracking their health!"
-          buttonTitle="+ Add Your First Pet"
+          title={t('no_pets_yet')}
+          message={t('no_pets_msg')}
+          buttonTitle={t('add_first_pet')}
           onPress={() => navigation.navigate('AddPet')}
         />
       </View>
@@ -83,40 +84,40 @@ const PetsScreen = ({ navigation }) => {
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.primary} />}
     >
       <View style={styles.header}>
-        <Text style={styles.title}>My Pets 🐾</Text>
+        <Text style={styles.title}>{t('my_pets')} 🐾</Text>
         <CuteButton
-          title="+ Add Pet"
-          onPress={() => navigation.navigate('AddPet')}
+          title={t('add_pet')}
+          onPress={() => { playTap(); navigation.navigate('AddPet'); }}
           size="small"
           variant="primary"
         />
       </View>
 
       {pets.map(pet => {
-        const petType = PET_TYPES.find(t => t.id === pet.species) || PET_TYPES[PET_TYPES.length - 1];
+        const petType = PET_TYPES.find(tp => tp.id === pet.species) || PET_TYPES[PET_TYPES.length - 1];
         return (
           <TouchableOpacity
             key={pet.id}
             style={styles.petCard}
             activeOpacity={0.7}
-            onPress={() => navigation.navigate('PetDetail', { petId: pet.id })}
+            onPress={() => { playTap(); navigation.navigate('PetDetail', { petId: pet.id }); }}
             onLongPress={() => handleDeletePet(pet)}
           >
             <PetAvatar pet={pet} size={70} />
             <View style={styles.petInfo}>
               <Text style={styles.petName}>{pet.name}</Text>
               <Text style={styles.petBreed}>
-                {petType.emoji} {pet.breed || petType.name}
-                {pet.gender ? ` • ${pet.gender}` : ''}
+                {petType.emoji} {pet.breed || t(petType.id)}
+                {pet.gender ? ` • ${t(pet.gender.toLowerCase())}` : ''}
               </Text>
               <Text style={styles.petDetails}>
-                {pet.age_years > 0 ? `${pet.age_years}y` : ''}
-                {pet.age_months > 0 ? ` ${pet.age_months}m` : ''} old
+                {pet.age_years > 0 ? `${pet.age_years}${t('years').charAt(0)}` : ''}
+                {pet.age_months > 0 ? ` ${pet.age_months}${t('months').charAt(0)}` : ''} {t('old')}
                 {pet.weight > 0 ? ` • ${pet.weight} ${pet.weight_unit}` : ''}
               </Text>
               <View style={styles.medBadge}>
                 <Text style={styles.medBadgeText}>
-                  💊 {petMedCounts[pet.id] || 0} active medications
+                  💊 {petMedCounts[pet.id] || 0} {t('active_medications')}
                 </Text>
               </View>
             </View>
@@ -131,71 +132,18 @@ const PetsScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
-  content: {
-    padding: SPACING.lg,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: SPACING.lg,
-    marginTop: SPACING.sm,
-  },
-  title: {
-    fontSize: FONTS.sizes.title,
-    fontWeight: '800',
-    color: COLORS.text,
-  },
-  petCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.white,
-    borderRadius: RADIUS.xl,
-    padding: SPACING.lg,
-    marginBottom: SPACING.md,
-    ...SHADOWS.medium,
-  },
-  petInfo: {
-    flex: 1,
-    marginLeft: SPACING.lg,
-  },
-  petName: {
-    fontSize: FONTS.sizes.xl,
-    fontWeight: '700',
-    color: COLORS.text,
-  },
-  petBreed: {
-    fontSize: FONTS.sizes.md,
-    color: COLORS.textLight,
-    marginTop: 2,
-  },
-  petDetails: {
-    fontSize: FONTS.sizes.sm,
-    color: COLORS.textMuted,
-    marginTop: 2,
-  },
-  medBadge: {
-    alignSelf: 'flex-start',
-    backgroundColor: COLORS.primarySoft,
-    paddingHorizontal: SPACING.sm,
-    paddingVertical: 2,
-    borderRadius: RADIUS.sm,
-    marginTop: SPACING.xs,
-  },
-  medBadgeText: {
-    fontSize: FONTS.sizes.xs,
-    color: COLORS.primary,
-    fontWeight: '600',
-  },
-  arrow: {
-    fontSize: 28,
-    color: COLORS.textMuted,
-    fontWeight: '300',
-  },
+  container: { flex: 1, backgroundColor: COLORS.background },
+  content: { padding: SPACING.lg },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACING.lg, marginTop: SPACING.sm },
+  title: { fontSize: FONTS.sizes.title, fontWeight: '800', color: COLORS.text },
+  petCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: COLORS.white, borderRadius: RADIUS.xl, padding: SPACING.lg, marginBottom: SPACING.md, ...SHADOWS.medium },
+  petInfo: { flex: 1, marginLeft: SPACING.lg },
+  petName: { fontSize: FONTS.sizes.xl, fontWeight: '700', color: COLORS.text },
+  petBreed: { fontSize: FONTS.sizes.md, color: COLORS.textLight, marginTop: 2 },
+  petDetails: { fontSize: FONTS.sizes.sm, color: COLORS.textMuted, marginTop: 2 },
+  medBadge: { alignSelf: 'flex-start', backgroundColor: COLORS.primarySoft, paddingHorizontal: SPACING.sm, paddingVertical: 2, borderRadius: RADIUS.sm, marginTop: SPACING.xs },
+  medBadgeText: { fontSize: FONTS.sizes.xs, color: COLORS.primary, fontWeight: '600' },
+  arrow: { fontSize: 28, color: COLORS.textMuted, fontWeight: '300' },
 });
 
 export default PetsScreen;

@@ -1,18 +1,19 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { COLORS, RADIUS, SHADOWS, SPACING, FONTS } from '../constants/theme';
+import { t } from '../i18n/i18n';
 
 const MedicationCard = ({ log, onTake, onSkip, onSnooze }) => {
   const getStatusStyle = () => {
     switch (log.status) {
       case 'taken':
-        return { bg: '#E8F5E9', border: COLORS.success, icon: '✅', label: 'Given' };
+        return { bg: '#E8F5E9', border: COLORS.success, icon: '✅', label: t('taken') };
       case 'missed':
-        return { bg: '#FFEBEE', border: COLORS.danger, icon: '❌', label: 'Missed' };
+        return { bg: '#FFEBEE', border: COLORS.danger, icon: '❌', label: t('missed') };
       case 'skipped':
-        return { bg: '#F5F5F5', border: COLORS.textMuted, icon: '⏭️', label: 'Skipped' };
+        return { bg: '#F5F5F5', border: COLORS.textMuted, icon: '⏭️', label: t('skipped_status') };
       default:
-        return { bg: COLORS.white, border: COLORS.primaryLight, icon: '💊', label: 'Pending' };
+        return { bg: COLORS.white, border: COLORS.primaryLight, icon: '💊', label: t('pending') };
     }
   };
 
@@ -37,12 +38,12 @@ const MedicationCard = ({ log, onTake, onSkip, onSnooze }) => {
       </View>
 
       <View style={styles.medInfo}>
-        <Text style={styles.medName}>{log.med_name || 'Medication'}</Text>
+        <Text style={styles.medName}>{log.med_name || t('medications')}</Text>
         <Text style={styles.dosage}>
-          {log.dosage} {log.dosage_unit} {log.with_food ? '🍽️ With food' : ''}
+          {log.dosage} {log.dosage_unit} {log.with_food ? `🍽️ ${t('with_food_label')}` : ''}
         </Text>
         <Text style={styles.petName}>
-          For: {log.pet_name} {log.pet_species === 'dog' ? '🐶' : log.pet_species === 'cat' ? '🐱' : '🐾'}
+          {t('for_pet')} {log.pet_name} {log.pet_species === 'dog' ? '🐶' : log.pet_species === 'cat' ? '🐱' : '🐾'}
         </Text>
         {log.category ? (
           <View style={styles.categoryBadge}>
@@ -54,13 +55,13 @@ const MedicationCard = ({ log, onTake, onSkip, onSnooze }) => {
       {isPending && (
         <View style={styles.actionRow}>
           <TouchableOpacity style={[styles.actionBtn, styles.takeBtn]} onPress={() => onTake?.(log.id)}>
-            <Text style={styles.takeBtnText}>✅ Give Now</Text>
+            <Text style={styles.takeBtnText}>✅ {t('give_now')}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.actionBtn, styles.snoozeBtn]} onPress={() => onSnooze?.(log.id)}>
-            <Text style={styles.snoozeBtnText}>⏰ Snooze</Text>
+            <Text style={styles.snoozeBtnText}>⏰ {t('snooze')}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.actionBtn, styles.skipBtn]} onPress={() => onSkip?.(log.id)}>
-            <Text style={styles.skipBtnText}>⏭️ Skip</Text>
+            <Text style={styles.skipBtnText}>⏭️ {t('skip')}</Text>
           </TouchableOpacity>
         </View>
       )}

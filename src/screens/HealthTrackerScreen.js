@@ -11,26 +11,29 @@ import CuteButton from '../components/CuteButton';
 import CuteInput from '../components/CuteInput';
 import EmptyState from '../components/EmptyState';
 import * as DB from '../database/database';
+import { t } from '../i18n/i18n';
+import { playTap, playSuccess } from '../utils/sounds';
+import { logError } from '../utils/logger';
 
 const SYMPTOM_OPTIONS = [
-  { id: 'vomiting', label: 'Vomiting', emoji: '🤮' },
-  { id: 'diarrhea', label: 'Diarrhea', emoji: '💩' },
-  { id: 'lethargy', label: 'Lethargy', emoji: '😴' },
-  { id: 'loss_appetite', label: 'Loss of Appetite', emoji: '🍽️' },
-  { id: 'excessive_thirst', label: 'Excessive Thirst', emoji: '💧' },
-  { id: 'limping', label: 'Limping', emoji: '🦿' },
-  { id: 'scratching', label: 'Excessive Scratching', emoji: '🐾' },
-  { id: 'coughing', label: 'Coughing', emoji: '😷' },
-  { id: 'sneezing', label: 'Sneezing', emoji: '🤧' },
-  { id: 'eye_discharge', label: 'Eye Discharge', emoji: '👁️' },
-  { id: 'ear_issue', label: 'Ear Issue', emoji: '👂' },
-  { id: 'skin_issue', label: 'Skin Issue', emoji: '🩹' },
-  { id: 'seizure', label: 'Seizure', emoji: '⚡' },
-  { id: 'behavior_change', label: 'Behavior Change', emoji: '🔄' },
+  { id: 'vomiting', emoji: '🤮' },
+  { id: 'diarrhea', emoji: '💩' },
+  { id: 'lethargy', emoji: '😴' },
+  { id: 'loss_appetite', emoji: '🍽️' },
+  { id: 'excessive_thirst', emoji: '💧' },
+  { id: 'limping', emoji: '🦿' },
+  { id: 'scratching', emoji: '🐾' },
+  { id: 'coughing', emoji: '😷' },
+  { id: 'sneezing', emoji: '🤧' },
+  { id: 'eye_discharge', emoji: '👁️' },
+  { id: 'ear_issue', emoji: '👂' },
+  { id: 'skin_issue', emoji: '🩹' },
+  { id: 'seizure', emoji: '⚡' },
+  { id: 'behavior_change', emoji: '🔄' },
 ];
 
 const HealthTrackerScreen = ({ navigation }) => {
-  const { pets, activePet, setActivePet } = useApp();
+  const { pets, activePet, setActivePet, language } = useApp();
   const [activeTab, setActiveTab] = useState('weight');
   const [weightLogs, setWeightLogs] = useState([]);
   const [healthLogs, setHealthLogs] = useState([]);
@@ -65,7 +68,7 @@ const HealthTrackerScreen = ({ navigation }) => {
       setHealthLogs(h);
       const v = await DB.getVaccinations(activePet.id);
       setVaccinations(v);
-    } catch (e) { console.error(e); }
+    } catch (e) { logError('Error loading health data', e); }
   };
 
   const onRefresh = async () => {
@@ -76,7 +79,7 @@ const HealthTrackerScreen = ({ navigation }) => {
 
   const handleAddWeight = async () => {
     if (!newWeight.trim()) {
-      Alert.alert('Oops!', 'Please enter a weight');
+      Alert.alert(`${t('oops')} ⚖️`, t('enter_weight'));
       return;
     }
     try {
@@ -90,13 +93,14 @@ const HealthTrackerScreen = ({ navigation }) => {
       setNewWeight('');
       setWeightNote('');
       await loadData();
-      Alert.alert('Recorded! ⚖️', 'Weight has been logged.');
-    } catch (e) { console.error(e); }
+      playSuccess();
+      Alert.alert(`${t('weight_recorded')} ⚖️`, t('weight_logged'));
+    } catch (e) { logError('Error adding weight log', e); }
   };
 
   const handleLogSymptoms = async () => {
     if (selectedSymptoms.length === 0) {
-      Alert.alert('Oops!', 'Please select at least one symptom');
+      Alert.alert(`${t('oops')}!`, t('select_symptom_error'));
       return;
     }
     try {
@@ -112,13 +116,14 @@ const HealthTrackerScreen = ({ navigation }) => {
       setSelectedSymptoms([]);
       setSymptomNotes('');
       await loadData();
-      Alert.alert('Logged! 📋', 'Symptoms have been recorded. Share this with your vet if they persist.');
-    } catch (e) { console.error(e); }
+      playSuccess();
+      Alert.alert(`${t('symptoms_logged')} 📋`, t('symptoms_recorded'));
+    } catch (e) { logError('Error logging symptoms', e); }
   };
 
   const handleAddVaccination = async () => {
     if (!vacName.trim()) {
-      Alert.alert('Oops!', 'Please enter the vaccination name');
+      Alert.alert(`${t('oops')}!`, t('enter_vaccine_name'));
       return;
     }
     try {
@@ -131,14 +136,16 @@ const HealthTrackerScreen = ({ navigation }) => {
       setVacName('');
       setVacNextDue('');
       await loadData();
-      Alert.alert('Recorded! 💉', 'Vaccination has been logged.');
-    } catch (e) { console.error(e); }
+      playSuccess();
+      Alert.alert(`${t('vaccination_recorded')} 💉`, t('vaccination_logged'));
+    } catch (e) { logError('Error adding vaccination', e); }
   };
 
   const toggleSymptom = (id) => {
     setSelectedSymptoms(prev =>
       prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]
     );
+    playTap();
   };
 
   if (pets.length === 0) {
@@ -146,9 +153,9 @@ const HealthTrackerScreen = ({ navigation }) => {
       <View style={styles.container}>
         <EmptyState
           emoji="🐾"
-          title="Add a Pet First"
-          message="You need to add a pet before tracking their health."
-          buttonTitle="+ Add Pet"
+          title={t('add_pet_first')}
+          message={t('add_pet_health_msg')}
+          buttonTitle={t('add_pet')}
           onPress={() => navigation.navigate('PetsTab', { screen: 'AddPet' })}
         />
       </View>
@@ -161,7 +168,7 @@ const HealthTrackerScreen = ({ navigation }) => {
       contentContainerStyle={styles.content}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.primary} />}
     >
-      <Text style={styles.title}>Health Tracker 📊</Text>
+      <Text style={styles.title}>{t('health_tracker')} 📊</Text>
 
       {/* Pet Selector */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.petRow}>
@@ -169,7 +176,7 @@ const HealthTrackerScreen = ({ navigation }) => {
           <TouchableOpacity
             key={pet.id}
             style={[styles.petChip, activePet?.id === pet.id && styles.petChipActive]}
-            onPress={() => setActivePet(pet)}
+            onPress={() => { setActivePet(pet); playTap(); }}
           >
             <Text>{pet.species === 'dog' ? '🐶' : pet.species === 'cat' ? '🐱' : '🐾'} {pet.name}</Text>
           </TouchableOpacity>
@@ -179,14 +186,14 @@ const HealthTrackerScreen = ({ navigation }) => {
       {/* Tabs */}
       <View style={styles.tabRow}>
         {[
-          { id: 'weight', label: '⚖️ Weight' },
-          { id: 'symptoms', label: '🩺 Symptoms' },
-          { id: 'vaccines', label: '💉 Vaccines' },
+          { id: 'weight', label: `⚖️ ${t('weight_tab')}` },
+          { id: 'symptoms', label: `🩺 ${t('symptoms_tab')}` },
+          { id: 'vaccines', label: `💉 ${t('vaccines_tab')}` },
         ].map(tab => (
           <TouchableOpacity
             key={tab.id}
             style={[styles.tab, activeTab === tab.id && styles.tabActive]}
-            onPress={() => setActiveTab(tab.id)}
+            onPress={() => { setActiveTab(tab.id); playTap(); }}
           >
             <Text style={[styles.tabText, activeTab === tab.id && styles.tabTextActive]}>{tab.label}</Text>
           </TouchableOpacity>
@@ -197,13 +204,13 @@ const HealthTrackerScreen = ({ navigation }) => {
       {activeTab === 'weight' && (
         <>
           <CuteCard variant="pink" style={styles.formCard}>
-            <Text style={styles.formTitle}>Log Weight ⚖️</Text>
+            <Text style={styles.formTitle}>{t('log_weight')} ⚖️</Text>
             <View style={styles.row}>
               <View style={{ flex: 2 }}>
                 <CuteInput
                   value={newWeight}
                   onChangeText={setNewWeight}
-                  placeholder="Weight"
+                  placeholder={t('weight_placeholder')}
                   keyboardType="decimal-pad"
                 />
               </View>
@@ -222,22 +229,22 @@ const HealthTrackerScreen = ({ navigation }) => {
             <CuteInput
               value={weightNote}
               onChangeText={setWeightNote}
-              placeholder="Notes (optional)"
+              placeholder={t('notes_optional')}
             />
-            <CuteButton title="📏 Log Weight" onPress={handleAddWeight} fullWidth />
+            <CuteButton title={`📏 ${t('log_weight_btn')}`} onPress={handleAddWeight} fullWidth />
           </CuteCard>
 
           {/* Weight Chart (simple text-based) */}
           {weightLogs.length > 0 && (
             <CuteCard>
-              <Text style={styles.chartTitle}>Weight History</Text>
+              <Text style={styles.chartTitle}>{t('weight_history_title')}</Text>
               {weightLogs.slice(0, 10).map((log, i) => {
                 const maxW = Math.max(...weightLogs.map(l => l.weight));
                 const pct = (log.weight / maxW) * 100;
                 return (
                   <View key={log.id} style={styles.chartRow}>
                     <Text style={styles.chartDate}>
-                      {new Date(log.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      {new Date(log.date).toLocaleDateString()}
                     </Text>
                     <View style={styles.chartBarBg}>
                       <View style={[styles.chartBar, { width: `${pct}%` }]} />
@@ -255,8 +262,8 @@ const HealthTrackerScreen = ({ navigation }) => {
       {activeTab === 'symptoms' && (
         <>
           <CuteCard variant="mint" style={styles.formCard}>
-            <Text style={styles.formTitle}>Log Symptoms 🩺</Text>
-            <Text style={styles.formHint}>Select all symptoms you've noticed today:</Text>
+            <Text style={styles.formTitle}>{t('log_symptoms')} 🩺</Text>
+            <Text style={styles.formHint}>{t('select_symptoms_hint')}</Text>
             <View style={styles.symptomGrid}>
               {SYMPTOM_OPTIONS.map(sym => (
                 <TouchableOpacity
@@ -271,30 +278,30 @@ const HealthTrackerScreen = ({ navigation }) => {
                   <Text style={[
                     styles.symptomLabel,
                     selectedSymptoms.includes(sym.id) && styles.symptomLabelActive,
-                  ]}>{sym.label}</Text>
+                  ]}>{t(sym.id)}</Text>
                 </TouchableOpacity>
               ))}
             </View>
             <CuteInput
               value={symptomNotes}
               onChangeText={setSymptomNotes}
-              placeholder="Additional notes..."
+              placeholder={t('additional_notes')}
               multiline
             />
-            <CuteButton title="📋 Log Symptoms" onPress={handleLogSymptoms} fullWidth variant="success" />
+            <CuteButton title={`📋 ${t('log_symptoms_btn')}`} onPress={handleLogSymptoms} fullWidth variant="success" />
           </CuteCard>
 
           {/* Symptom History */}
           {healthLogs.filter(l => l.type === 'symptom').length > 0 && (
             <CuteCard>
-              <Text style={styles.chartTitle}>Recent Symptoms</Text>
+              <Text style={styles.chartTitle}>{t('recent_symptoms')}</Text>
               {healthLogs.filter(l => l.type === 'symptom').slice(0, 15).map(log => {
                 const sym = SYMPTOM_OPTIONS.find(s => s.id === log.value);
                 return (
                   <View key={log.id} style={styles.historyRow}>
                     <Text style={styles.historyEmoji}>{sym?.emoji || '❓'}</Text>
                     <View style={{ flex: 1 }}>
-                      <Text style={styles.historyLabel}>{sym?.label || log.value}</Text>
+                      <Text style={styles.historyLabel}>{t(log.value) || log.value}</Text>
                       <Text style={styles.historyDate}>
                         {new Date(log.date).toLocaleDateString()}
                         {log.notes ? ` — ${log.notes}` : ''}
@@ -312,31 +319,31 @@ const HealthTrackerScreen = ({ navigation }) => {
       {activeTab === 'vaccines' && (
         <>
           <CuteCard variant="lavender" style={styles.formCard}>
-            <Text style={styles.formTitle}>Add Vaccination 💉</Text>
+            <Text style={styles.formTitle}>{t('add_vaccination')} 💉</Text>
             <CuteInput
-              label="Vaccine Name"
+              label={t('vaccine_name')}
               value={vacName}
               onChangeText={setVacName}
-              placeholder="e.g., Rabies, DHPP, FVRCP"
+              placeholder={t('vaccine_placeholder')}
               required
             />
             <CuteInput
-              label="Next Due Date"
+              label={t('next_due_date')}
               value={vacNextDue}
               onChangeText={setVacNextDue}
-              placeholder="YYYY-MM-DD (optional)"
+              placeholder="YYYY-MM-DD"
             />
-            <CuteButton title="💉 Add Vaccination" onPress={handleAddVaccination} fullWidth variant="secondary" />
+            <CuteButton title={`💉 ${t('add_vaccination_btn')}`} onPress={handleAddVaccination} fullWidth variant="secondary" />
           </CuteCard>
 
           {vaccinations.length > 0 && (
             <CuteCard>
-              <Text style={styles.chartTitle}>Vaccination Records</Text>
+              <Text style={styles.chartTitle}>{t('vaccination_records')}</Text>
               {vaccinations.map(vac => (
                 <View key={vac.id} style={styles.vacRow}>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.vacName}>{vac.name}</Text>
-                    <Text style={styles.vacDate}>Given: {new Date(vac.date_given).toLocaleDateString()}</Text>
+                    <Text style={styles.vacDate}>{t('given')}: {new Date(vac.date_given).toLocaleDateString()}</Text>
                   </View>
                   {vac.next_due_date ? (
                     <View style={[
@@ -344,7 +351,7 @@ const HealthTrackerScreen = ({ navigation }) => {
                       new Date(vac.next_due_date) < new Date() ? styles.dueOverdue : styles.dueUpcoming,
                     ]}>
                       <Text style={styles.dueText}>
-                        {new Date(vac.next_due_date) < new Date() ? '⚠️ Overdue' : `📅 Due ${new Date(vac.next_due_date).toLocaleDateString()}`}
+                        {new Date(vac.next_due_date) < new Date() ? `⚠️ ${t('overdue')}` : `📅 ${t('due')} ${new Date(vac.next_due_date).toLocaleDateString()}`}
                       </Text>
                     </View>
                   ) : null}

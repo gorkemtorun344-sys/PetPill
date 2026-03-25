@@ -6,15 +6,19 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AppProvider } from './src/context/AppContext';
 import AppNavigator from './src/navigation/AppNavigator';
+import ErrorBoundary from './src/components/ErrorBoundary';
 import { requestNotificationPermissions } from './src/utils/notifications';
 import { getDatabase } from './src/database/database';
+import { initAudio } from './src/utils/sounds';
 import { COLORS, FONTS } from './src/constants/theme';
+import { t } from './src/i18n/i18n';
+import { logError } from './src/utils/logger';
 
 const LoadingScreen = () => (
   <View style={styles.loadingContainer}>
     <Text style={styles.loadingEmoji}>💊🐾</Text>
     <Text style={styles.loadingTitle}>PetPill</Text>
-    <Text style={styles.loadingSubtitle}>Caring for your pets, one pill at a time</Text>
+    <Text style={styles.loadingSubtitle}>{t('loading_subtitle')}</Text>
     <ActivityIndicator size="large" color={COLORS.primary} style={styles.spinner} />
   </View>
 );
@@ -28,16 +32,12 @@ export default function App() {
 
   const initializeApp = async () => {
     try {
-      // Initialize database
       await getDatabase();
-
-      // Request notification permissions
       await requestNotificationPermissions();
-
-      // Small delay for splash feel
+      await initAudio();
       await new Promise(resolve => setTimeout(resolve, 800));
     } catch (e) {
-      console.error('App initialization error:', e);
+      logError('App initialization error:', e);
     } finally {
       setIsReady(true);
     }
@@ -48,16 +48,18 @@ export default function App() {
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <AppProvider>
-          <NavigationContainer>
-            <StatusBar style="dark" backgroundColor={COLORS.background} />
-            <AppNavigator />
-          </NavigationContainer>
-        </AppProvider>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
+    <ErrorBoundary>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaProvider>
+          <AppProvider>
+            <NavigationContainer>
+              <StatusBar style="dark" backgroundColor={COLORS.background} />
+              <AppNavigator />
+            </NavigationContainer>
+          </AppProvider>
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    </ErrorBoundary>
   );
 }
 

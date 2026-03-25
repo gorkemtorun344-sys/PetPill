@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  Alert, Linking, Share,
+  Alert, Linking, Share, Modal, FlatList,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { COLORS, SPACING, FONTS, RADIUS, SHADOWS } from '../constants/theme';
@@ -10,14 +10,21 @@ import CuteButton from '../components/CuteButton';
 import CuteInput from '../components/CuteInput';
 import { useApp } from '../context/AppContext';
 import * as DB from '../database/database';
+import { t } from '../i18n/i18n';
+import { LANGUAGES } from '../i18n/i18n';
+import { playSuccess, playPremium, playTap } from '../utils/sounds';
+import { logError } from '../utils/logger';
+
+const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.petpill.app';
 
 const SettingsScreen = ({ navigation }) => {
-  const { isPremium, setIsPremium, pets, refreshAll } = useApp();
+  const { isPremium, activatePremium, pets, refreshAll, language, changeLanguage, soundOn, toggleSound } = useApp();
   const [caregivers, setCaregivers] = useState([]);
   const [showAddCaregiver, setShowAddCaregiver] = useState(false);
   const [cgName, setCgName] = useState('');
   const [cgPhone, setCgPhone] = useState('');
   const [cgRelation, setCgRelation] = useState('');
+  const [showLangModal, setShowLangModal] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -29,12 +36,12 @@ const SettingsScreen = ({ navigation }) => {
     try {
       const cgs = await DB.getCaregivers();
       setCaregivers(cgs);
-    } catch (e) { console.error(e); }
+    } catch (e) { logError('Error loading caregivers', e); }
   };
 
   const handleAddCaregiver = async () => {
     if (!cgName.trim()) {
-      Alert.alert('Oops!', 'Please enter a name');
+      Alert.alert(t('oops'), t('enter_name'));
       return;
     }
     try {
@@ -49,15 +56,16 @@ const SettingsScreen = ({ navigation }) => {
       setCgRelation('');
       setShowAddCaregiver(false);
       await loadCaregivers();
-      Alert.alert('Added! 👨‍👩‍👧', `${cgName} has been added as a caregiver.`);
-    } catch (e) { console.error(e); }
+      playSuccess();
+      Alert.alert(`${t('caregiver_added')} 👨‍👩‍👧`, `${cgName} ${t('has_been_added')}`);
+    } catch (e) { logError('Error adding caregiver', e); }
   };
 
   const handleDeleteCaregiver = (cg) => {
-    Alert.alert(`Remove ${cg.name}?`, 'They will no longer be listed as a caregiver.', [
-      { text: 'Cancel', style: 'cancel' },
+    Alert.alert(`${t('remove')} ${cg.name}?`, t('remove_caregiver_msg'), [
+      { text: t('cancel'), style: 'cancel' },
       {
-        text: 'Remove', style: 'destructive',
+        text: t('remove'), style: 'destructive',
         onPress: async () => {
           await DB.deleteCaregiver(cg.id);
           await loadCaregivers();
@@ -67,41 +75,30 @@ const SettingsScreen = ({ navigation }) => {
   };
 
   const handleUpgrade = () => {
-    Alert.alert(
-      '🌟 PetPill Premium',
-      'Get unlimited pets, detailed health reports, price alerts, and ad-free experience!\n\n$4.99/month or $39.99/year',
-      [
-        { text: 'Maybe Later', style: 'cancel' },
-        {
-          text: '🌟 Upgrade Now',
-          onPress: () => {
-            // In production: integrate with App Store / Google Play billing
-            setIsPremium(true);
-            Alert.alert('Welcome to Premium! 🎉', 'You now have access to all premium features!');
-          },
-        },
-      ]
-    );
+    // Instant premium activation - no payment flow
+    playPremium();
+    activatePremium();
+    Alert.alert(`${t('welcome_premium')} 🎉`, t('premium_activated'));
   };
 
   const handleShare = async () => {
     try {
       await Share.share({
-        message: 'I use PetPill to track my pet\'s medications and health! It\'s free and super cute 🐾💊 Download it here: [App Store Link]',
+        message: `${t('share_message')} 🐾💊`,
       });
-    } catch (e) { console.error(e); }
+    } catch (e) { logError('Error sharing app', e); }
   };
 
   const handleExportData = () => {
     Alert.alert(
-      'Export Pet Data 📄',
-      'Generate a PDF report with all your pet\'s health data, medication history, and vaccination records. Perfect for vet visits!',
+      `${t('export_pet_data')} 📄`,
+      t('export_description'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('cancel'), style: 'cancel' },
         {
-          text: '📄 Export PDF',
+          text: `📄 ${t('export_pdf')}`,
           onPress: () => {
-            Alert.alert('Coming Soon!', 'PDF export will be available in the next update.');
+            Alert.alert(t('coming_soon'), t('pdf_coming_soon'));
           },
         },
       ]
@@ -110,18 +107,26 @@ const SettingsScreen = ({ navigation }) => {
 
   const handleEmergency = () => {
     Alert.alert(
-      '🚨 Emergency Numbers',
-      'ASPCA Poison Control: (888) 426-4435\nPet Poison Helpline: (855) 764-7661\n\nNote: Consultation fees may apply.',
+      `🚨 ${t('emergency_numbers')}`,
+      t('emergency_numbers_body'),
       [
-        { text: 'Close' },
-        { text: '📞 Call ASPCA', onPress: () => Linking.openURL('tel:8884264435') },
+        { text: t('close') },
+        { text: `📞 ${t('call_aspca_btn')}`, onPress: () => Linking.openURL('tel:8884264435') },
       ]
     );
   };
 
+  const handleLanguageSelect = (langCode) => {
+    changeLanguage(langCode);
+    playTap();
+    setShowLangModal(false);
+  };
+
+  const currentLang = LANGUAGES.find(l => l.code === language) || LANGUAGES[0];
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.title}>Settings ⚙️</Text>
+      <Text style={styles.title}>{t('settings')} ⚙️</Text>
 
       {/* Premium Banner */}
       {!isPremium && (
@@ -131,12 +136,10 @@ const SettingsScreen = ({ navigation }) => {
           style={styles.premiumCard}
         >
           <Text style={styles.premiumEmoji}>🌟</Text>
-          <Text style={styles.premiumTitle}>Upgrade to PetPill Premium</Text>
-          <Text style={styles.premiumDesc}>
-            Unlimited pets, health reports, price alerts & more!
-          </Text>
+          <Text style={styles.premiumTitle}>{t('upgrade_premium')}</Text>
+          <Text style={styles.premiumDesc}>{t('premium_desc')}</Text>
           <View style={styles.premiumPrice}>
-            <Text style={styles.premiumPriceText}>$4.99/month</Text>
+            <Text style={styles.premiumPriceText}>{t('premium_price')}</Text>
           </View>
         </CuteCard>
       )}
@@ -144,16 +147,43 @@ const SettingsScreen = ({ navigation }) => {
       {isPremium && (
         <CuteCard variant="mint">
           <Text style={{ textAlign: 'center', fontSize: FONTS.sizes.lg, fontWeight: '700', color: COLORS.text }}>
-            🌟 Premium Active — Thank you!
+            🌟 {t('premium_active')}
           </Text>
         </CuteCard>
       )}
 
+      {/* Language Selector */}
+      <Text style={styles.sectionTitle}>{t('language')} 🌍</Text>
+      <CuteCard onPress={() => setShowLangModal(true)}>
+        <View style={styles.menuItem}>
+          <Text style={styles.menuEmoji}>{currentLang.flag}</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.menuTitle}>{t('select_language')}</Text>
+            <Text style={styles.menuDesc}>{currentLang.nativeName}</Text>
+          </View>
+          <Text style={styles.menuArrow}>›</Text>
+        </View>
+      </CuteCard>
+
+      {/* Sound Toggle */}
+      <TouchableOpacity onPress={() => { toggleSound(); playTap(); }}>
+        <CuteCard>
+          <View style={styles.menuItem}>
+            <Text style={styles.menuEmoji}>{soundOn ? '🔊' : '🔇'}</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.menuTitle}>{t('sound_effects')}</Text>
+              <Text style={styles.menuDesc}>{soundOn ? 'ON' : 'OFF'}</Text>
+            </View>
+            <View style={[styles.toggleSwitch, soundOn && styles.toggleSwitchOn]}>
+              <View style={[styles.toggleKnob, soundOn && styles.toggleKnobOn]} />
+            </View>
+          </View>
+        </CuteCard>
+      </TouchableOpacity>
+
       {/* Caregivers */}
-      <Text style={styles.sectionTitle}>Caregivers 👨‍👩‍👧</Text>
-      <Text style={styles.sectionDesc}>
-        Add family members who also take care of your pets
-      </Text>
+      <Text style={styles.sectionTitle}>{t('caregivers')} 👨‍👩‍👧</Text>
+      <Text style={styles.sectionDesc}>{t('caregivers_desc')}</Text>
 
       {caregivers.map(cg => (
         <CuteCard key={cg.id}>
@@ -172,18 +202,18 @@ const SettingsScreen = ({ navigation }) => {
 
       {showAddCaregiver ? (
         <CuteCard variant="lavender">
-          <Text style={styles.formTitle}>Add Caregiver</Text>
-          <CuteInput label="Name" value={cgName} onChangeText={setCgName} placeholder="Name" required />
-          <CuteInput label="Phone" value={cgPhone} onChangeText={setCgPhone} placeholder="Phone number" keyboardType="phone-pad" />
-          <CuteInput label="Relationship" value={cgRelation} onChangeText={setCgRelation} placeholder="e.g., Spouse, Child, Pet Sitter" />
+          <Text style={styles.formTitle}>{t('add_caregiver')}</Text>
+          <CuteInput label={t('name')} value={cgName} onChangeText={setCgName} placeholder={t('name')} required />
+          <CuteInput label={t('phone')} value={cgPhone} onChangeText={setCgPhone} placeholder={t('phone_placeholder')} keyboardType="phone-pad" />
+          <CuteInput label={t('relationship')} value={cgRelation} onChangeText={setCgRelation} placeholder={t('relationship_placeholder')} />
           <View style={styles.formActions}>
-            <CuteButton title="Cancel" variant="ghost" onPress={() => setShowAddCaregiver(false)} style={{ flex: 1 }} />
-            <CuteButton title="✅ Add" variant="primary" onPress={handleAddCaregiver} style={{ flex: 1 }} />
+            <CuteButton title={t('cancel')} variant="ghost" onPress={() => setShowAddCaregiver(false)} style={{ flex: 1 }} />
+            <CuteButton title={`✅ ${t('add')}`} variant="primary" onPress={handleAddCaregiver} style={{ flex: 1 }} />
           </View>
         </CuteCard>
       ) : (
         <CuteButton
-          title="+ Add Caregiver"
+          title={t('add_caregiver')}
           variant="outline"
           onPress={() => setShowAddCaregiver(true)}
           fullWidth
@@ -192,14 +222,14 @@ const SettingsScreen = ({ navigation }) => {
       )}
 
       {/* Quick Actions */}
-      <Text style={styles.sectionTitle}>Quick Actions 🚀</Text>
+      <Text style={styles.sectionTitle}>{t('quick_actions')} 🚀</Text>
 
       <CuteCard onPress={handleExportData}>
         <View style={styles.menuItem}>
           <Text style={styles.menuEmoji}>📄</Text>
           <View style={{ flex: 1 }}>
-            <Text style={styles.menuTitle}>Export Health Report</Text>
-            <Text style={styles.menuDesc}>Generate PDF for vet visits</Text>
+            <Text style={styles.menuTitle}>{t('export_health_report')}</Text>
+            <Text style={styles.menuDesc}>{t('generate_pdf')}</Text>
           </View>
           <Text style={styles.menuArrow}>›</Text>
         </View>
@@ -209,8 +239,8 @@ const SettingsScreen = ({ navigation }) => {
         <View style={styles.menuItem}>
           <Text style={styles.menuEmoji}>🚨</Text>
           <View style={{ flex: 1 }}>
-            <Text style={styles.menuTitle}>Emergency Contacts</Text>
-            <Text style={styles.menuDesc}>Poison hotline & emergency vets</Text>
+            <Text style={styles.menuTitle}>{t('emergency_contacts')}</Text>
+            <Text style={styles.menuDesc}>{t('poison_hotline')}</Text>
           </View>
           <Text style={styles.menuArrow}>›</Text>
         </View>
@@ -220,24 +250,22 @@ const SettingsScreen = ({ navigation }) => {
         <View style={styles.menuItem}>
           <Text style={styles.menuEmoji}>💌</Text>
           <View style={{ flex: 1 }}>
-            <Text style={styles.menuTitle}>Share PetPill</Text>
-            <Text style={styles.menuDesc}>Tell your pet-loving friends!</Text>
+            <Text style={styles.menuTitle}>{t('share_petpill')}</Text>
+            <Text style={styles.menuDesc}>{t('tell_friends')}</Text>
           </View>
           <Text style={styles.menuArrow}>›</Text>
         </View>
       </CuteCard>
 
       {/* App Info */}
-      <Text style={styles.sectionTitle}>About 💝</Text>
+      <Text style={styles.sectionTitle}>{t('about')} 💝</Text>
 
       <CuteCard>
         <View style={styles.aboutSection}>
           <Text style={styles.aboutLogo}>💊🐾</Text>
           <Text style={styles.aboutName}>PetPill</Text>
-          <Text style={styles.aboutVersion}>Version 1.0.0</Text>
-          <Text style={styles.aboutDesc}>
-            Made with love for pet parents everywhere 💕
-          </Text>
+          <Text style={styles.aboutVersion}>{t('version')} 1.2.0</Text>
+          <Text style={styles.aboutDesc}>{t('made_with_love')} 💕</Text>
         </View>
       </CuteCard>
 
@@ -245,25 +273,63 @@ const SettingsScreen = ({ navigation }) => {
         <View style={styles.menuItem}>
           <Text style={styles.menuEmoji}>📧</Text>
           <View style={{ flex: 1 }}>
-            <Text style={styles.menuTitle}>Contact Support</Text>
+            <Text style={styles.menuTitle}>{t('contact_support')}</Text>
             <Text style={styles.menuDesc}>support@petpill.app</Text>
           </View>
           <Text style={styles.menuArrow}>›</Text>
         </View>
       </CuteCard>
 
-      <CuteCard>
+      <CuteCard onPress={() => Linking.openURL(PLAY_STORE_URL).catch(() => {})}>
         <View style={styles.menuItem}>
           <Text style={styles.menuEmoji}>⭐</Text>
           <View style={{ flex: 1 }}>
-            <Text style={styles.menuTitle}>Rate PetPill</Text>
-            <Text style={styles.menuDesc}>Help us help more pets!</Text>
+            <Text style={styles.menuTitle}>{t('rate_petpill')}</Text>
+            <Text style={styles.menuDesc}>{t('help_more_pets')}</Text>
+          </View>
+          <Text style={styles.menuArrow}>›</Text>
+        </View>
+      </CuteCard>
+
+      <CuteCard onPress={() => navigation.navigate('PrivacyPolicy')}>
+        <View style={styles.menuItem}>
+          <Text style={styles.menuEmoji}>🔒</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.menuTitle}>{t('privacy_policy')}</Text>
+            <Text style={styles.menuDesc}>{t('privacy_policy_desc')}</Text>
           </View>
           <Text style={styles.menuArrow}>›</Text>
         </View>
       </CuteCard>
 
       <View style={{ height: 100 }} />
+
+      {/* Language Modal */}
+      <Modal visible={showLangModal} transparent animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>{t('select_language')} 🌍</Text>
+            <FlatList
+              data={LANGUAGES}
+              keyExtractor={item => item.code}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={[styles.langItem, language === item.code && styles.langItemActive]}
+                  onPress={() => handleLanguageSelect(item.code)}
+                >
+                  <Text style={styles.langFlag}>{item.flag}</Text>
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.langName, language === item.code && styles.langNameActive]}>{item.nativeName}</Text>
+                    <Text style={styles.langEnglish}>{item.name}</Text>
+                  </View>
+                  {language === item.code && <Text style={styles.langCheck}>✓</Text>}
+                </TouchableOpacity>
+              )}
+            />
+            <CuteButton title={t('close')} variant="ghost" onPress={() => setShowLangModal(false)} fullWidth style={{ marginTop: SPACING.md }} />
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -276,21 +342,9 @@ const styles = StyleSheet.create({
   premiumEmoji: { fontSize: 48, marginBottom: SPACING.sm },
   premiumTitle: { fontSize: FONTS.sizes.xl, fontWeight: '800', color: COLORS.text, textAlign: 'center' },
   premiumDesc: { fontSize: FONTS.sizes.md, color: COLORS.textLight, textAlign: 'center', marginTop: SPACING.xs },
-  premiumPrice: {
-    marginTop: SPACING.md,
-    backgroundColor: COLORS.primary,
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.sm,
-    borderRadius: RADIUS.full,
-  },
+  premiumPrice: { marginTop: SPACING.md, backgroundColor: COLORS.primary, paddingHorizontal: SPACING.xl, paddingVertical: SPACING.sm, borderRadius: RADIUS.full },
   premiumPriceText: { color: COLORS.white, fontWeight: '800', fontSize: FONTS.sizes.lg },
-  sectionTitle: {
-    fontSize: FONTS.sizes.xl,
-    fontWeight: '700',
-    color: COLORS.text,
-    marginTop: SPACING.xl,
-    marginBottom: SPACING.xs,
-  },
+  sectionTitle: { fontSize: FONTS.sizes.xl, fontWeight: '700', color: COLORS.text, marginTop: SPACING.xl, marginBottom: SPACING.xs },
   sectionDesc: { fontSize: FONTS.sizes.md, color: COLORS.textLight, marginBottom: SPACING.md },
   caregiverRow: { flexDirection: 'row', alignItems: 'center' },
   cgName: { fontSize: FONTS.sizes.lg, fontWeight: '700', color: COLORS.text },
@@ -309,6 +363,21 @@ const styles = StyleSheet.create({
   aboutName: { fontSize: FONTS.sizes.xxl, fontWeight: '800', color: COLORS.text, marginTop: SPACING.sm },
   aboutVersion: { fontSize: FONTS.sizes.sm, color: COLORS.textMuted },
   aboutDesc: { fontSize: FONTS.sizes.md, color: COLORS.textLight, textAlign: 'center', marginTop: SPACING.sm },
+  toggleSwitch: { width: 50, height: 28, borderRadius: 14, backgroundColor: COLORS.border, padding: 2, justifyContent: 'center' },
+  toggleSwitchOn: { backgroundColor: COLORS.primary },
+  toggleKnob: { width: 24, height: 24, borderRadius: 12, backgroundColor: COLORS.white },
+  toggleKnobOn: { alignSelf: 'flex-end' },
+  // Modal
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
+  modalContent: { backgroundColor: COLORS.white, borderTopLeftRadius: RADIUS.xxl, borderTopRightRadius: RADIUS.xxl, padding: SPACING.xl, maxHeight: '70%' },
+  modalTitle: { fontSize: FONTS.sizes.xxl, fontWeight: '800', color: COLORS.text, textAlign: 'center', marginBottom: SPACING.lg },
+  langItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: SPACING.md, paddingHorizontal: SPACING.md, borderRadius: RADIUS.lg, marginBottom: SPACING.xs },
+  langItemActive: { backgroundColor: COLORS.primarySoft, borderWidth: 1, borderColor: COLORS.primary },
+  langFlag: { fontSize: 28, marginRight: SPACING.md },
+  langName: { fontSize: FONTS.sizes.lg, fontWeight: '600', color: COLORS.text },
+  langNameActive: { color: COLORS.primary, fontWeight: '700' },
+  langEnglish: { fontSize: FONTS.sizes.sm, color: COLORS.textLight },
+  langCheck: { fontSize: 20, color: COLORS.primary, fontWeight: '700' },
 });
 
 export default SettingsScreen;
