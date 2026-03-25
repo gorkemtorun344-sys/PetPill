@@ -6,6 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AppProvider } from './src/context/AppContext';
 import AppNavigator from './src/navigation/AppNavigator';
+import ErrorBoundary from './src/components/ErrorBoundary';
 import { requestNotificationPermissions } from './src/utils/notifications';
 import { getDatabase } from './src/database/database';
 import { COLORS, FONTS } from './src/constants/theme';
@@ -49,14 +50,16 @@ export default function App() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <AppProvider>
-          <NavigationContainer>
-            <StatusBar style="dark" backgroundColor={COLORS.background} />
-            <AppNavigator />
-          </NavigationContainer>
-        </AppProvider>
-      </SafeAreaProvider>
+      <ErrorBoundary>
+        <SafeAreaProvider>
+          <AppProvider>
+            <NavigationContainer>
+              <StatusBar style="dark" backgroundColor={COLORS.background} />
+              <AppNavigator />
+            </NavigationContainer>
+          </AppProvider>
+        </SafeAreaProvider>
+      </ErrorBoundary>
     </GestureHandlerRootView>
   );
 }

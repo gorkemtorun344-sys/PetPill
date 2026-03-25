@@ -14,6 +14,8 @@ import AddMedicationScreen from '../screens/AddMedicationScreen';
 import PriceComparerScreen from '../screens/PriceComparerScreen';
 import HealthTrackerScreen from '../screens/HealthTrackerScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import PrivacyPolicyScreen from '../screens/PrivacyPolicyScreen';
+import TermsScreen from '../screens/TermsScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -87,6 +89,8 @@ const HealthStack = () => (
 const SettingsStack = () => (
   <Stack.Navigator screenOptions={defaultScreenOptions}>
     <Stack.Screen name="SettingsMain" component={SettingsScreen} options={{ headerShown: false }} />
+    <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} options={{ title: '🔒 Privacy Policy', headerBackTitle: 'Back' }} />
+    <Stack.Screen name="Terms" component={TermsScreen} options={{ title: '📋 Terms of Service', headerBackTitle: 'Back' }} />
   </Stack.Navigator>
 );
 

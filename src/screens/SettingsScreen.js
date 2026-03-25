@@ -263,7 +263,32 @@ const SettingsScreen = ({ navigation }) => {
         </View>
       </CuteCard>
 
-      <View style={{ height: 100 }} />
+      {/* Legal */}
+      <Text style={styles.sectionTitle}>Legal 📋</Text>
+
+      <CuteCard onPress={() => navigation.navigate('PrivacyPolicy')}>
+        <View style={styles.menuItem}>
+          <Text style={styles.menuEmoji}>🔒</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.menuTitle}>Privacy Policy</Text>
+            <Text style={styles.menuDesc}>How we protect your data</Text>
+          </View>
+          <Text style={styles.menuArrow}>›</Text>
+        </View>
+      </CuteCard>
+
+      <CuteCard onPress={() => navigation.navigate('Terms')}>
+        <View style={styles.menuItem}>
+          <Text style={styles.menuEmoji}>📋</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.menuTitle}>Terms of Service</Text>
+            <Text style={styles.menuDesc}>Usage terms and conditions</Text>
+          </View>
+          <Text style={styles.menuArrow}>›</Text>
+        </View>
+      </CuteCard>
+
+      <View style={{ height: 150 }} />
     </ScrollView>
   );
 };
