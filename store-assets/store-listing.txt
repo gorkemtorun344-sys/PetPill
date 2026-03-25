@@ -1,0 +1,76 @@
+====================================
+GOOGLE PLAY STORE LISTING - PetPill
+====================================
+
+APP NAME: PetPill - Pet Medication Tracker
+
+SHORT DESCRIPTION (80 chars max):
+Track pet medications, health records & vet visits. Never miss a dose again!
+
+FULL DESCRIPTION (4000 chars max):
+--------------------------------------
+PetPill is the cutest and easiest way to manage your pet's medications and health — all in one app!
+
+Whether your furry friend takes daily vitamins, monthly flea prevention, or post-surgery medication, PetPill helps you stay on top of every dose with smart reminders and a beautiful, easy-to-use interface.
+
+KEY FEATURES:
+
+💊 Medication Tracking
+• Add unlimited medications with dosage, frequency, and schedule
+• Track daily/weekly/monthly/custom medication schedules
+• Mark doses as given, skipped, or missed
+• Get reminders so you never forget a dose
+• Track medication supply and get refill alerts
+
+🐾 Pet Profiles
+• Create detailed profiles for all your pets
+• Add photos, breed, weight, and birthday
+• Track multiple pets in one app
+
+📊 Health Tracker
+• Log your pet's weight over time
+• Track symptoms and health changes
+• Record vaccination history with reminders
+• Keep vet appointment schedules organized
+
+💰 Price Comparer
+• Compare medication prices across pharmacies
+• Find the best deals on popular pet medications
+• Save money on your pet's prescriptions
+
+👨‍👩‍👧 Caregiver Support
+• Add family members as caregivers
+• Share medication responsibilities
+• Everyone stays informed about your pet's schedule
+
+🏥 Vet & Emergency
+• Store vet appointment details
+• Quick access to emergency poison control numbers
+• Export health reports as PDF for vet visits
+
+🔒 Privacy First
+• All data stored locally on your device
+• No accounts required
+• No data collection or tracking
+• Your pet's health info stays private
+
+PERFECT FOR:
+✅ Pet parents managing daily medications
+✅ Senior pet owners with complex medication schedules
+✅ Multi-pet households
+✅ Post-surgery medication tracking
+✅ Chronic condition management (diabetes, allergies, etc.)
+
+Download PetPill today and give your furry family members the care they deserve! 💕🐾
+
+CATEGORY: Health & Fitness (or Medical)
+CONTENT RATING: Everyone
+TAGS: pet, medication, health, tracker, reminder, veterinary, dog, cat, pills
+
+====================================
+PRIVACY POLICY URL:
+https://gorkemtorun344-sys.github.io/PetPill/privacy-policy.html
+
+TERMS OF SERVICE URL:
+https://gorkemtorun344-sys.github.io/PetPill/terms.html
+====================================

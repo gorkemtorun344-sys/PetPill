@@ -191,6 +191,20 @@ const SettingsScreen = ({ navigation }) => {
         />
       )}
 
+      {/* App Settings */}
+      <Text style={styles.sectionTitle}>App Settings 🔧</Text>
+
+      <CuteCard onPress={() => navigation.navigate('Language')}>
+        <View style={styles.menuItem}>
+          <Text style={styles.menuEmoji}>🌐</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.menuTitle}>Language</Text>
+            <Text style={styles.menuDesc}>Change app language</Text>
+          </View>
+          <Text style={styles.menuArrow}>›</Text>
+        </View>
+      </CuteCard>
+
       {/* Quick Actions */}
       <Text style={styles.sectionTitle}>Quick Actions 🚀</Text>
 

@@ -9,7 +9,7 @@ import CuteButton from '../components/CuteButton';
 import CuteCard from '../components/CuteCard';
 import { useApp } from '../context/AppContext';
 import * as DB from '../database/database';
-import { scheduleNotificationsForMedication } from '../utils/notifications';
+import { scheduleNotificationsForMedication, sendTestNotification } from '../utils/notifications';
 
 const AddMedicationScreen = ({ navigation, route }) => {
   const preselectedPetId = route?.params?.petId;
@@ -115,7 +115,10 @@ const AddMedicationScreen = ({ navigation, route }) => {
           end_date: endDate,
           with_food: withFood ? 1 : 0,
         };
-        await scheduleNotificationsForMedication(savedMed, pet);
+        const ids = await scheduleNotificationsForMedication(savedMed, pet);
+        // Send immediate confirmation notification
+        await sendTestNotification();
+        console.log('Scheduled', ids.length, 'notifications for', savedMed.name);
       }
 
       await refreshAll();
