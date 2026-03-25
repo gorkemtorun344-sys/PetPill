@@ -6,9 +6,11 @@ import { Platform } from 'react-native';
 const IN_EXPO_GO = isRunningInExpoGo();
 
 let Notifications = null;
+let SchedulableTriggerInputTypes = null;
 
 if (!IN_EXPO_GO) {
   Notifications = require('expo-notifications');
+  SchedulableTriggerInputTypes = Notifications.SchedulableTriggerInputTypes;
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
       shouldShowAlert: true,
@@ -17,6 +19,19 @@ if (!IN_EXPO_GO) {
     }),
   });
 }
+
+// Helper: create a date-based trigger (SDK 55+ format)
+const makeDateTrigger = (date) => ({
+  type: SchedulableTriggerInputTypes.DATE,
+  date: date instanceof Date ? date.getTime() : date,
+});
+
+// Helper: create a time-interval trigger (SDK 55+ format)
+const makeIntervalTrigger = (seconds) => ({
+  type: SchedulableTriggerInputTypes.TIME_INTERVAL,
+  seconds,
+  repeats: false,
+});
 
 export const requestNotificationPermissions = async () => {
   if (IN_EXPO_GO || !Notifications) return false;
@@ -72,7 +87,7 @@ export const scheduleMedicationReminder = async (medication, pet, time, date) =>
       sound: 'default',
       ...(Platform.OS === 'android' && { channelId: 'medications' }),
     },
-    trigger,
+    trigger: makeDateTrigger(trigger),
   });
 };
 
@@ -86,7 +101,7 @@ export const scheduleRefillReminder = async (medication, pet) => {
       sound: 'default',
       ...(Platform.OS === 'android' && { channelId: 'refills' }),
     },
-    trigger: { seconds: 1 },
+    trigger: makeIntervalTrigger(1),
   });
 };
 
@@ -106,7 +121,7 @@ export const scheduleAppointmentReminder = async (appointment, pet) => {
         sound: 'default',
         ...(Platform.OS === 'android' && { channelId: 'appointments' }),
       },
-      trigger: dayBefore,
+      trigger: makeDateTrigger(dayBefore),
     });
   }
 
@@ -121,7 +136,7 @@ export const scheduleAppointmentReminder = async (appointment, pet) => {
         sound: 'default',
         ...(Platform.OS === 'android' && { channelId: 'appointments' }),
       },
-      trigger: morningOf,
+      trigger: makeDateTrigger(morningOf),
     });
   }
 };
@@ -187,7 +202,7 @@ export const scheduleNotificationsForMedication = async (medication, pet) => {
             sound: 'default',
             ...(Platform.OS === 'android' && { channelId: 'medications' }),
           },
-          trigger,
+          trigger: makeDateTrigger(trigger),
         });
         scheduledIds.push(id);
       } catch (e) {
