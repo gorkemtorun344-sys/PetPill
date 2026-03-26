@@ -7,6 +7,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { COLORS, SPACING, FONTS, RADIUS, SHADOWS } from '../constants/theme';
 import { MEDICATION_INTERACTIONS } from '../constants/theme';
 import { useApp } from '../context/AppContext';
+import { useLanguage } from '../context/LanguageContext';
 import CuteCard from '../components/CuteCard';
 import CuteButton from '../components/CuteButton';
 import EmptyState from '../components/EmptyState';
@@ -14,6 +15,7 @@ import * as DB from '../database/database';
 
 const MedicationsScreen = ({ navigation }) => {
   const { pets } = useApp();
+  const { t } = useLanguage();
   const [medications, setMedications] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [interactions, setInteractions] = useState([]);
@@ -56,12 +58,12 @@ const MedicationsScreen = ({ navigation }) => {
 
   const handleDeactivate = (med) => {
     Alert.alert(
-      `Stop ${med.name}?`,
-      `This will deactivate ${med.name} for ${med.pet_name}. No more reminders will be sent.`,
+      t('meds_stop_title', { name: med.name }),
+      t('meds_stop_msg', { name: med.name, pet: med.pet_name }),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('cancel'), style: 'cancel' },
         {
-          text: 'Stop Medication',
+          text: t('meds_stop_confirm'),
           style: 'destructive',
           onPress: async () => {
             await DB.deactivateMedication(med.id);
@@ -89,8 +91,8 @@ const MedicationsScreen = ({ navigation }) => {
   const getRefillStatus = (med) => {
     if (med.total_supply === 0) return null;
     const pct = (med.remaining_supply / med.total_supply) * 100;
-    if (pct <= 10) return { color: COLORS.danger, label: 'Refill now!', emoji: '🚨' };
-    if (med.remaining_supply <= med.refill_reminder_at) return { color: COLORS.warning, label: 'Running low', emoji: '⚠️' };
+    if (pct <= 10) return { color: COLORS.danger, label: t('meds_refill_now'), emoji: '🚨' };
+    if (med.remaining_supply <= med.refill_reminder_at) return { color: COLORS.warning, label: t('meds_running_low'), emoji: '⚠️' };
     return { color: COLORS.success, label: `${med.remaining_supply} left`, emoji: '✅' };
   };
 
@@ -104,8 +106,8 @@ const MedicationsScreen = ({ navigation }) => {
       <View style={styles.container}>
         <EmptyState
           emoji="🐾"
-          title="Add a Pet First"
-          message="You need to add a pet before you can manage medications."
+          title={t('meds_add_pet_first')}
+          message={t('meds_add_pet_msg')}
           buttonTitle="+ Add Pet"
           onPress={() => navigation.navigate('PetsTab', { screen: 'AddPet' })}
         />
@@ -120,9 +122,9 @@ const MedicationsScreen = ({ navigation }) => {
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.primary} />}
     >
       <View style={styles.header}>
-        <Text style={styles.title}>Medications 💊</Text>
+        <Text style={styles.title}>{t('meds_header')}</Text>
         <CuteButton
-          title="+ Add"
+          title={t('meds_add_btn')}
           onPress={() => navigation.navigate('AddMedication')}
           size="small"
           variant="primary"
@@ -132,7 +134,7 @@ const MedicationsScreen = ({ navigation }) => {
       {/* Drug Interaction Warnings */}
       {interactions.length > 0 && (
         <CuteCard variant="warning" style={styles.warningCard}>
-          <Text style={styles.warningTitle}>⚠️ Drug Interaction Warning</Text>
+          <Text style={styles.warningTitle}>{t('meds_interaction_title')}</Text>
           {interactions.map((inter, i) => (
             <View key={i} style={styles.warningItem}>
               <Text style={styles.warningDrugs}>{inter.drugs.join(' + ')}</Text>
@@ -156,8 +158,8 @@ const MedicationsScreen = ({ navigation }) => {
       {/* Filter Tabs */}
       <View style={styles.filterRow}>
         {[
-          { id: 'all', label: 'All', count: medications.length },
-          { id: 'refill', label: 'Need Refill', count: medications.filter(m => m.total_supply > 0 && m.remaining_supply <= m.refill_reminder_at).length },
+          { id: 'all', label: t('meds_all'), count: medications.length },
+          { id: 'refill', label: t('meds_need_refill'), count: medications.filter(m => m.total_supply > 0 && m.remaining_supply <= m.refill_reminder_at).length },
         ].map(f => (
           <TouchableOpacity
             key={f.id}
@@ -175,9 +177,9 @@ const MedicationsScreen = ({ navigation }) => {
       {filteredMeds.length === 0 ? (
         <EmptyState
           emoji="💊"
-          title={filter === 'refill' ? 'All Stocked Up!' : 'No Medications'}
-          message={filter === 'refill' ? 'None of your medications need refilling right now.' : 'Add a medication to start tracking.'}
-          buttonTitle={filter === 'all' ? '+ Add Medication' : undefined}
+          title={filter === 'refill' ? t('meds_refill_empty_title') : t('meds_empty_title')}
+          message={filter === 'refill' ? t('meds_refill_empty_desc') : t('meds_empty_desc')}
+          buttonTitle={filter === 'all' ? t('meds_add_empty_btn') : undefined}
           onPress={filter === 'all' ? () => navigation.navigate('AddMedication') : undefined}
         />
       ) : (
@@ -204,22 +206,22 @@ const MedicationsScreen = ({ navigation }) => {
 
               <View style={styles.medDetails}>
                 <View style={styles.detailItem}>
-                  <Text style={styles.detailLabel}>Dosage</Text>
+                  <Text style={styles.detailLabel}>{t('meds_dosage')}</Text>
                   <Text style={styles.detailValue}>{med.dosage} {med.dosage_unit}</Text>
                 </View>
                 <View style={styles.detailItem}>
-                  <Text style={styles.detailLabel}>Frequency</Text>
+                  <Text style={styles.detailLabel}>{t('meds_frequency')}</Text>
                   <Text style={styles.detailValue}>{getFrequencyLabel(med.frequency)}</Text>
                 </View>
                 <View style={styles.detailItem}>
-                  <Text style={styles.detailLabel}>Times</Text>
+                  <Text style={styles.detailLabel}>{t('meds_times')}</Text>
                   <Text style={styles.detailValue}>{times.join(', ') || '-'}</Text>
                 </View>
               </View>
 
               {med.with_food ? (
                 <View style={styles.foodBadge}>
-                  <Text style={styles.foodText}>🍽️ Give with food</Text>
+                  <Text style={styles.foodText}>{t('meds_with_food')}</Text>
                 </View>
               ) : null}
 
@@ -232,7 +234,7 @@ const MedicationsScreen = ({ navigation }) => {
               <View style={styles.medActions}>
                 {refill && refill.color !== COLORS.success && (
                   <CuteButton
-                    title="🛒 Buy Refill"
+                    title={t('meds_buy_refill')}
                     size="small"
                     variant="primary"
                     onPress={() => navigation.navigate('PriceTab', { screen: 'PriceComparer', params: { searchQuery: med.name } })}
@@ -240,7 +242,7 @@ const MedicationsScreen = ({ navigation }) => {
                   />
                 )}
                 <CuteButton
-                  title="⏹️ Stop"
+                  title={t('meds_stop_btn')}
                   size="small"
                   variant="ghost"
                   onPress={() => handleDeactivate(med)}

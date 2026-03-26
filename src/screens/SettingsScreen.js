@@ -9,10 +9,12 @@ import CuteCard from '../components/CuteCard';
 import CuteButton from '../components/CuteButton';
 import CuteInput from '../components/CuteInput';
 import { useApp } from '../context/AppContext';
+import { useLanguage } from '../context/LanguageContext';
 import * as DB from '../database/database';
 
 const SettingsScreen = ({ navigation }) => {
   const { isPremium, setIsPremium, pets, refreshAll } = useApp();
+  const { t } = useLanguage();
   const [caregivers, setCaregivers] = useState([]);
   const [showAddCaregiver, setShowAddCaregiver] = useState(false);
   const [cgName, setCgName] = useState('');
@@ -34,7 +36,7 @@ const SettingsScreen = ({ navigation }) => {
 
   const handleAddCaregiver = async () => {
     if (!cgName.trim()) {
-      Alert.alert('Oops!', 'Please enter a name');
+      Alert.alert(t('oops'), 'Please enter a name');
       return;
     }
     try {
@@ -49,15 +51,15 @@ const SettingsScreen = ({ navigation }) => {
       setCgRelation('');
       setShowAddCaregiver(false);
       await loadCaregivers();
-      Alert.alert('Added! 👨‍👩‍👧', `${cgName} has been added as a caregiver.`);
+      Alert.alert('Added! 👨‍👩‍👧', `${cgName} ${t('settings_caregiver_added')}`);
     } catch (e) { console.error(e); }
   };
 
   const handleDeleteCaregiver = (cg) => {
-    Alert.alert(`Remove ${cg.name}?`, 'They will no longer be listed as a caregiver.', [
-      { text: 'Cancel', style: 'cancel' },
+    Alert.alert(t('settings_remove_caregiver_title', { name: cg.name }), t('settings_remove_caregiver_msg'), [
+      { text: t('cancel'), style: 'cancel' },
       {
-        text: 'Remove', style: 'destructive',
+        text: t('remove'), style: 'destructive',
         onPress: async () => {
           await DB.deleteCaregiver(cg.id);
           await loadCaregivers();
@@ -68,16 +70,16 @@ const SettingsScreen = ({ navigation }) => {
 
   const handleUpgrade = () => {
     Alert.alert(
-      '🌟 PetPill Premium',
-      'Get unlimited pets, detailed health reports, price alerts, and ad-free experience!\n\n$4.99/month or $39.99/year',
+      t('settings_upgrade_title'),
+      t('settings_upgrade_msg'),
       [
-        { text: 'Maybe Later', style: 'cancel' },
+        { text: t('settings_maybe_later'), style: 'cancel' },
         {
-          text: '🌟 Upgrade Now',
+          text: t('settings_upgrade_btn'),
           onPress: () => {
             // In production: integrate with App Store / Google Play billing
             setIsPremium(true);
-            Alert.alert('Welcome to Premium! 🎉', 'You now have access to all premium features!');
+            Alert.alert('Welcome to Premium! 🎉', t('settings_welcome_premium'));
           },
         },
       ]
@@ -97,11 +99,11 @@ const SettingsScreen = ({ navigation }) => {
       'Export Pet Data 📄',
       'Generate a PDF report with all your pet\'s health data, medication history, and vaccination records. Perfect for vet visits!',
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('cancel'), style: 'cancel' },
         {
           text: '📄 Export PDF',
           onPress: () => {
-            Alert.alert('Coming Soon!', 'PDF export will be available in the next update.');
+            Alert.alert(t('coming_soon'), t('settings_export_coming'));
           },
         },
       ]
@@ -111,17 +113,17 @@ const SettingsScreen = ({ navigation }) => {
   const handleEmergency = () => {
     Alert.alert(
       '🚨 Emergency Numbers',
-      'ASPCA Poison Control: (888) 426-4435\nPet Poison Helpline: (855) 764-7661\n\nNote: Consultation fees may apply.',
+      t('settings_emergency_msg'),
       [
-        { text: 'Close' },
-        { text: '📞 Call ASPCA', onPress: () => Linking.openURL('tel:8884264435') },
+        { text: t('close') },
+        { text: t('settings_call_aspca'), onPress: () => Linking.openURL('tel:8884264435') },
       ]
     );
   };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.title}>Settings ⚙️</Text>
+      <Text style={styles.title}>{t('settings_header')}</Text>
 
       {/* Premium Banner */}
       {!isPremium && (
@@ -131,12 +133,12 @@ const SettingsScreen = ({ navigation }) => {
           style={styles.premiumCard}
         >
           <Text style={styles.premiumEmoji}>🌟</Text>
-          <Text style={styles.premiumTitle}>Upgrade to PetPill Premium</Text>
+          <Text style={styles.premiumTitle}>{t('settings_premium_title')}</Text>
           <Text style={styles.premiumDesc}>
-            Unlimited pets, health reports, price alerts & more!
+            {t('settings_premium_desc')}
           </Text>
           <View style={styles.premiumPrice}>
-            <Text style={styles.premiumPriceText}>$4.99/month</Text>
+            <Text style={styles.premiumPriceText}>{t('settings_premium_price')}</Text>
           </View>
         </CuteCard>
       )}
@@ -144,15 +146,15 @@ const SettingsScreen = ({ navigation }) => {
       {isPremium && (
         <CuteCard variant="mint">
           <Text style={{ textAlign: 'center', fontSize: FONTS.sizes.lg, fontWeight: '700', color: COLORS.text }}>
-            🌟 Premium Active — Thank you!
+            {t('settings_premium_active')}
           </Text>
         </CuteCard>
       )}
 
       {/* Caregivers */}
-      <Text style={styles.sectionTitle}>Caregivers 👨‍👩‍👧</Text>
+      <Text style={styles.sectionTitle}>{t('settings_caregivers')}</Text>
       <Text style={styles.sectionDesc}>
-        Add family members who also take care of your pets
+        {t('settings_caregivers_desc')}
       </Text>
 
       {caregivers.map(cg => (
@@ -172,18 +174,18 @@ const SettingsScreen = ({ navigation }) => {
 
       {showAddCaregiver ? (
         <CuteCard variant="lavender">
-          <Text style={styles.formTitle}>Add Caregiver</Text>
-          <CuteInput label="Name" value={cgName} onChangeText={setCgName} placeholder="Name" required />
-          <CuteInput label="Phone" value={cgPhone} onChangeText={setCgPhone} placeholder="Phone number" keyboardType="phone-pad" />
-          <CuteInput label="Relationship" value={cgRelation} onChangeText={setCgRelation} placeholder="e.g., Spouse, Child, Pet Sitter" />
+          <Text style={styles.formTitle}>{t('settings_add_caregiver')}</Text>
+          <CuteInput label={t('settings_caregiver_name')} value={cgName} onChangeText={setCgName} placeholder={t('settings_caregiver_name')} required />
+          <CuteInput label={t('settings_caregiver_phone')} value={cgPhone} onChangeText={setCgPhone} placeholder="Phone number" keyboardType="phone-pad" />
+          <CuteInput label={t('settings_caregiver_relation')} value={cgRelation} onChangeText={setCgRelation} placeholder={t('settings_caregiver_relation_placeholder')} />
           <View style={styles.formActions}>
-            <CuteButton title="Cancel" variant="ghost" onPress={() => setShowAddCaregiver(false)} style={{ flex: 1 }} />
+            <CuteButton title={t('cancel')} variant="ghost" onPress={() => setShowAddCaregiver(false)} style={{ flex: 1 }} />
             <CuteButton title="✅ Add" variant="primary" onPress={handleAddCaregiver} style={{ flex: 1 }} />
           </View>
         </CuteCard>
       ) : (
         <CuteButton
-          title="+ Add Caregiver"
+          title={t('settings_add_caregiver')}
           variant="outline"
           onPress={() => setShowAddCaregiver(true)}
           fullWidth
@@ -192,28 +194,28 @@ const SettingsScreen = ({ navigation }) => {
       )}
 
       {/* App Settings */}
-      <Text style={styles.sectionTitle}>App Settings 🔧</Text>
+      <Text style={styles.sectionTitle}>{t('settings_app_settings')}</Text>
 
       <CuteCard onPress={() => navigation.navigate('Language')}>
         <View style={styles.menuItem}>
           <Text style={styles.menuEmoji}>🌐</Text>
           <View style={{ flex: 1 }}>
-            <Text style={styles.menuTitle}>Language</Text>
-            <Text style={styles.menuDesc}>Change app language</Text>
+            <Text style={styles.menuTitle}>{t('settings_language')}</Text>
+            <Text style={styles.menuDesc}>{t('settings_language_desc')}</Text>
           </View>
           <Text style={styles.menuArrow}>›</Text>
         </View>
       </CuteCard>
 
       {/* Quick Actions */}
-      <Text style={styles.sectionTitle}>Quick Actions 🚀</Text>
+      <Text style={styles.sectionTitle}>{t('settings_quick_actions')}</Text>
 
       <CuteCard onPress={handleExportData}>
         <View style={styles.menuItem}>
           <Text style={styles.menuEmoji}>📄</Text>
           <View style={{ flex: 1 }}>
-            <Text style={styles.menuTitle}>Export Health Report</Text>
-            <Text style={styles.menuDesc}>Generate PDF for vet visits</Text>
+            <Text style={styles.menuTitle}>{t('settings_export')}</Text>
+            <Text style={styles.menuDesc}>{t('settings_export_desc')}</Text>
           </View>
           <Text style={styles.menuArrow}>›</Text>
         </View>
@@ -223,8 +225,8 @@ const SettingsScreen = ({ navigation }) => {
         <View style={styles.menuItem}>
           <Text style={styles.menuEmoji}>🚨</Text>
           <View style={{ flex: 1 }}>
-            <Text style={styles.menuTitle}>Emergency Contacts</Text>
-            <Text style={styles.menuDesc}>Poison hotline & emergency vets</Text>
+            <Text style={styles.menuTitle}>{t('settings_emergency')}</Text>
+            <Text style={styles.menuDesc}>{t('settings_emergency_desc')}</Text>
           </View>
           <Text style={styles.menuArrow}>›</Text>
         </View>
@@ -234,23 +236,23 @@ const SettingsScreen = ({ navigation }) => {
         <View style={styles.menuItem}>
           <Text style={styles.menuEmoji}>💌</Text>
           <View style={{ flex: 1 }}>
-            <Text style={styles.menuTitle}>Share PetPill</Text>
-            <Text style={styles.menuDesc}>Tell your pet-loving friends!</Text>
+            <Text style={styles.menuTitle}>{t('settings_share')}</Text>
+            <Text style={styles.menuDesc}>{t('settings_share_desc')}</Text>
           </View>
           <Text style={styles.menuArrow}>›</Text>
         </View>
       </CuteCard>
 
       {/* App Info */}
-      <Text style={styles.sectionTitle}>About 💝</Text>
+      <Text style={styles.sectionTitle}>{t('settings_about')}</Text>
 
       <CuteCard>
         <View style={styles.aboutSection}>
           <Text style={styles.aboutLogo}>💊🐾</Text>
           <Text style={styles.aboutName}>PetPill</Text>
-          <Text style={styles.aboutVersion}>Version 1.0.0</Text>
+          <Text style={styles.aboutVersion}>{t('settings_version')}</Text>
           <Text style={styles.aboutDesc}>
-            Made with love for pet parents everywhere 💕
+            {t('settings_tagline')}
           </Text>
         </View>
       </CuteCard>
@@ -259,7 +261,7 @@ const SettingsScreen = ({ navigation }) => {
         <View style={styles.menuItem}>
           <Text style={styles.menuEmoji}>📧</Text>
           <View style={{ flex: 1 }}>
-            <Text style={styles.menuTitle}>Contact Support</Text>
+            <Text style={styles.menuTitle}>{t('settings_support')}</Text>
             <Text style={styles.menuDesc}>support@petpill.app</Text>
           </View>
           <Text style={styles.menuArrow}>›</Text>
@@ -270,22 +272,22 @@ const SettingsScreen = ({ navigation }) => {
         <View style={styles.menuItem}>
           <Text style={styles.menuEmoji}>⭐</Text>
           <View style={{ flex: 1 }}>
-            <Text style={styles.menuTitle}>Rate PetPill</Text>
-            <Text style={styles.menuDesc}>Help us help more pets!</Text>
+            <Text style={styles.menuTitle}>{t('settings_rate')}</Text>
+            <Text style={styles.menuDesc}>{t('settings_rate_desc')}</Text>
           </View>
           <Text style={styles.menuArrow}>›</Text>
         </View>
       </CuteCard>
 
       {/* Legal */}
-      <Text style={styles.sectionTitle}>Legal 📋</Text>
+      <Text style={styles.sectionTitle}>{t('settings_legal')}</Text>
 
       <CuteCard onPress={() => navigation.navigate('PrivacyPolicy')}>
         <View style={styles.menuItem}>
           <Text style={styles.menuEmoji}>🔒</Text>
           <View style={{ flex: 1 }}>
-            <Text style={styles.menuTitle}>Privacy Policy</Text>
-            <Text style={styles.menuDesc}>How we protect your data</Text>
+            <Text style={styles.menuTitle}>{t('settings_privacy')}</Text>
+            <Text style={styles.menuDesc}>{t('settings_privacy_desc')}</Text>
           </View>
           <Text style={styles.menuArrow}>›</Text>
         </View>
@@ -295,8 +297,8 @@ const SettingsScreen = ({ navigation }) => {
         <View style={styles.menuItem}>
           <Text style={styles.menuEmoji}>📋</Text>
           <View style={{ flex: 1 }}>
-            <Text style={styles.menuTitle}>Terms of Service</Text>
-            <Text style={styles.menuDesc}>Usage terms and conditions</Text>
+            <Text style={styles.menuTitle}>{t('settings_terms')}</Text>
+            <Text style={styles.menuDesc}>{t('settings_terms_desc')}</Text>
           </View>
           <Text style={styles.menuArrow}>›</Text>
         </View>

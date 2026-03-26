@@ -6,9 +6,11 @@ import {
 import { COLORS, SPACING, FONTS, RADIUS, SHADOWS, PHARMACY_DATA, COMMON_MEDICATIONS } from '../constants/theme';
 import CuteCard from '../components/CuteCard';
 import CuteButton from '../components/CuteButton';
+import { useLanguage } from '../context/LanguageContext';
 
 const PriceComparerScreen = ({ route }) => {
   const initialQuery = route?.params?.searchQuery || '';
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [results, setResults] = useState([]);
   const [searching, setSearching] = useState(false);
@@ -108,8 +110,8 @@ const PriceComparerScreen = ({ route }) => {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.title}>Price Comparer 💰</Text>
-      <Text style={styles.subtitle}>Find the best deals on pet medications</Text>
+      <Text style={styles.title}>{t('price_header')}</Text>
+      <Text style={styles.subtitle}>{t('price_subtitle')}</Text>
 
       {/* Search Bar */}
       <View style={styles.searchContainer}>
@@ -122,7 +124,7 @@ const PriceComparerScreen = ({ route }) => {
               setSearchQuery(val);
               setShowSuggestions(val.length >= 2);
             }}
-            placeholder="Search medication name..."
+            placeholder={t('price_search_placeholder')}
             placeholderTextColor={COLORS.textMuted}
             returnKeyType="search"
             onSubmitEditing={() => handleSearch()}
@@ -134,7 +136,7 @@ const PriceComparerScreen = ({ route }) => {
           )}
         </View>
         <CuteButton
-          title="Search"
+          title={t('price_search_btn')}
           onPress={() => handleSearch()}
           size="medium"
           variant="primary"
@@ -166,7 +168,7 @@ const PriceComparerScreen = ({ route }) => {
       {/* Recent Searches */}
       {!searching && results.length === 0 && recentSearches.length > 0 && (
         <View style={styles.recentSection}>
-          <Text style={styles.recentTitle}>Recent Searches 🕐</Text>
+          <Text style={styles.recentTitle}>{t('price_recent')}</Text>
           <View style={styles.recentChips}>
             {recentSearches.map((term, i) => (
               <TouchableOpacity
@@ -187,7 +189,7 @@ const PriceComparerScreen = ({ route }) => {
       {/* Popular Medications */}
       {!searching && results.length === 0 && recentSearches.length === 0 && (
         <View style={styles.popularSection}>
-          <Text style={styles.popularTitle}>Popular Medications 🌟</Text>
+          <Text style={styles.popularTitle}>{t('price_popular')}</Text>
           {COMMON_MEDICATIONS.slice(0, 8).map((med, i) => (
             <TouchableOpacity
               key={i}
@@ -208,7 +210,7 @@ const PriceComparerScreen = ({ route }) => {
       {searching && (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={COLORS.primary} />
-          <Text style={styles.loadingText}>Finding best prices... 🔍</Text>
+          <Text style={styles.loadingText}>{t('price_searching')}</Text>
         </View>
       )}
 
@@ -217,7 +219,7 @@ const PriceComparerScreen = ({ route }) => {
         <>
           <View style={styles.resultsHeader}>
             <Text style={styles.resultsTitle}>
-              {results.length} pharmacies found for "{searchQuery}"
+              {t('price_found', { count: results.length })} for "{searchQuery}"
             </Text>
             <Text style={styles.resultsSubtitle}>
               Best price: <Text style={styles.bestPrice}>${lowestPrice.toFixed(2)}</Text>
@@ -235,7 +237,7 @@ const PriceComparerScreen = ({ route }) => {
               >
                 {isCheapest && (
                   <View style={styles.bestPriceBadge}>
-                    <Text style={styles.bestPriceBadgeText}>🏆 Best Price</Text>
+                    <Text style={styles.bestPriceBadgeText}>{t('price_best_badge')}</Text>
                   </View>
                 )}
 
@@ -263,12 +265,12 @@ const PriceComparerScreen = ({ route }) => {
                 <View style={styles.pharmacyBadges}>
                   {!pharmacy.inStock && (
                     <View style={[styles.badge, styles.outOfStock]}>
-                      <Text style={styles.badgeTextRed}>Out of Stock</Text>
+                      <Text style={styles.badgeTextRed}>{t('price_out_of_stock')}</Text>
                     </View>
                   )}
                   {pharmacy.freeShipping && pharmacy.inStock && (
                     <View style={[styles.badge, styles.freeShipBadge]}>
-                      <Text style={styles.badgeTextGreen}>🚚 Free Shipping</Text>
+                      <Text style={styles.badgeTextGreen}>{t('price_free_shipping')}</Text>
                     </View>
                   )}
                   {pharmacy.discount > 0 && (
@@ -290,7 +292,7 @@ const PriceComparerScreen = ({ route }) => {
 
                 {pharmacy.inStock ? (
                   <CuteButton
-                    title="🛒 Shop Now"
+                    title={t('price_shop_now')}
                     onPress={() => handleBuy(pharmacy, searchQuery)}
                     variant={isCheapest ? 'primary' : 'outline'}
                     fullWidth
@@ -299,7 +301,7 @@ const PriceComparerScreen = ({ route }) => {
                   />
                 ) : (
                   <CuteButton
-                    title="Out of Stock"
+                    title={t('price_out_of_stock')}
                     variant="ghost"
                     fullWidth
                     size="medium"
@@ -314,8 +316,7 @@ const PriceComparerScreen = ({ route }) => {
           {/* Disclaimer */}
           <CuteCard style={styles.disclaimer}>
             <Text style={styles.disclaimerText}>
-              💡 Prices are estimates and may vary. Always check the pharmacy website for current pricing.
-              Some links may earn us a small commission at no extra cost to you — this helps keep PetPill free!
+              {t('price_disclaimer')}
             </Text>
           </CuteCard>
         </>

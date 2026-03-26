@@ -7,6 +7,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { COLORS, SPACING, FONTS, SHADOWS, RADIUS } from '../constants/theme';
 import { PET_TYPES } from '../constants/theme';
 import { useApp } from '../context/AppContext';
+import { useLanguage } from '../context/LanguageContext';
 import PetAvatar from '../components/PetAvatar';
 import CuteButton from '../components/CuteButton';
 import EmptyState from '../components/EmptyState';
@@ -14,6 +15,7 @@ import * as DB from '../database/database';
 
 const PetsScreen = ({ navigation }) => {
   const { pets, loadPets } = useApp();
+  const { t } = useLanguage();
   const [refreshing, setRefreshing] = useState(false);
   const [petMedCounts, setPetMedCounts] = useState({});
 
@@ -46,12 +48,12 @@ const PetsScreen = ({ navigation }) => {
 
   const handleDeletePet = (pet) => {
     Alert.alert(
-      `Delete ${pet.name}? 😢`,
-      'This will remove all their medications, health records, and appointments. This cannot be undone.',
+      t('pets_delete_title', { name: pet.name }),
+      t('pets_delete_msg'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('delete'),
           style: 'destructive',
           onPress: async () => {
             await DB.deletePet(pet.id);
@@ -67,9 +69,9 @@ const PetsScreen = ({ navigation }) => {
       <View style={styles.container}>
         <EmptyState
           emoji="🐾"
-          title="No Pets Yet"
-          message="Add your first furry (or scaly) friend to start tracking their health!"
-          buttonTitle="+ Add Your First Pet"
+          title={t('pets_empty_title')}
+          message={t('pets_empty_desc')}
+          buttonTitle={t('pets_add_first_btn')}
           onPress={() => navigation.navigate('AddPet')}
         />
       </View>
@@ -83,9 +85,9 @@ const PetsScreen = ({ navigation }) => {
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.primary} />}
     >
       <View style={styles.header}>
-        <Text style={styles.title}>My Pets 🐾</Text>
+        <Text style={styles.title}>{t('pets_header')}</Text>
         <CuteButton
-          title="+ Add Pet"
+          title={t('pets_add_btn')}
           onPress={() => navigation.navigate('AddPet')}
           size="small"
           variant="primary"
@@ -116,7 +118,7 @@ const PetsScreen = ({ navigation }) => {
               </Text>
               <View style={styles.medBadge}>
                 <Text style={styles.medBadgeText}>
-                  💊 {petMedCounts[pet.id] || 0} active medications
+                  {t('pets_active_meds', { count: petMedCounts[pet.id] || 0 })}
                 </Text>
               </View>
             </View>

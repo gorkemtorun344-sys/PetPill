@@ -6,6 +6,7 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import { COLORS, SPACING, FONTS, RADIUS, SHADOWS } from '../constants/theme';
 import { useApp } from '../context/AppContext';
+import { useLanguage } from '../context/LanguageContext';
 import CuteCard from '../components/CuteCard';
 import CuteButton from '../components/CuteButton';
 import CuteInput from '../components/CuteInput';
@@ -31,6 +32,7 @@ const SYMPTOM_OPTIONS = [
 
 const HealthTrackerScreen = ({ navigation }) => {
   const { pets, activePet, setActivePet } = useApp();
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState('weight');
   const [weightLogs, setWeightLogs] = useState([]);
   const [healthLogs, setHealthLogs] = useState([]);
@@ -76,7 +78,7 @@ const HealthTrackerScreen = ({ navigation }) => {
 
   const handleAddWeight = async () => {
     if (!newWeight.trim()) {
-      Alert.alert('Oops!', 'Please enter a weight');
+      Alert.alert(t('oops'), t('health_no_weight'));
       return;
     }
     try {
@@ -90,13 +92,13 @@ const HealthTrackerScreen = ({ navigation }) => {
       setNewWeight('');
       setWeightNote('');
       await loadData();
-      Alert.alert('Recorded! ⚖️', 'Weight has been logged.');
+      Alert.alert('Recorded! ⚖️', t('health_weight_saved'));
     } catch (e) { console.error(e); }
   };
 
   const handleLogSymptoms = async () => {
     if (selectedSymptoms.length === 0) {
-      Alert.alert('Oops!', 'Please select at least one symptom');
+      Alert.alert(t('oops'), t('health_no_symptoms'));
       return;
     }
     try {
@@ -112,13 +114,13 @@ const HealthTrackerScreen = ({ navigation }) => {
       setSelectedSymptoms([]);
       setSymptomNotes('');
       await loadData();
-      Alert.alert('Logged! 📋', 'Symptoms have been recorded. Share this with your vet if they persist.');
+      Alert.alert('Logged! 📋', t('health_symptoms_saved'));
     } catch (e) { console.error(e); }
   };
 
   const handleAddVaccination = async () => {
     if (!vacName.trim()) {
-      Alert.alert('Oops!', 'Please enter the vaccination name');
+      Alert.alert(t('oops'), t('health_no_vaccine_name'));
       return;
     }
     try {
@@ -131,7 +133,7 @@ const HealthTrackerScreen = ({ navigation }) => {
       setVacName('');
       setVacNextDue('');
       await loadData();
-      Alert.alert('Recorded! 💉', 'Vaccination has been logged.');
+      Alert.alert('Recorded! 💉', t('health_vaccine_saved'));
     } catch (e) { console.error(e); }
   };
 
@@ -146,8 +148,8 @@ const HealthTrackerScreen = ({ navigation }) => {
       <View style={styles.container}>
         <EmptyState
           emoji="🐾"
-          title="Add a Pet First"
-          message="You need to add a pet before tracking their health."
+          title={t('health_add_pet_first')}
+          message={t('health_add_pet_msg')}
           buttonTitle="+ Add Pet"
           onPress={() => navigation.navigate('PetsTab', { screen: 'AddPet' })}
         />
@@ -161,7 +163,7 @@ const HealthTrackerScreen = ({ navigation }) => {
       contentContainerStyle={styles.content}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.primary} />}
     >
-      <Text style={styles.title}>Health Tracker 📊</Text>
+      <Text style={styles.title}>{t('health_header')}</Text>
 
       {/* Pet Selector */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.petRow}>
@@ -179,9 +181,9 @@ const HealthTrackerScreen = ({ navigation }) => {
       {/* Tabs */}
       <View style={styles.tabRow}>
         {[
-          { id: 'weight', label: '⚖️ Weight' },
-          { id: 'symptoms', label: '🩺 Symptoms' },
-          { id: 'vaccines', label: '💉 Vaccines' },
+          { id: 'weight', label: t('health_weight_tab') },
+          { id: 'symptoms', label: t('health_symptoms_tab') },
+          { id: 'vaccines', label: t('health_vaccines_tab') },
         ].map(tab => (
           <TouchableOpacity
             key={tab.id}
@@ -197,13 +199,13 @@ const HealthTrackerScreen = ({ navigation }) => {
       {activeTab === 'weight' && (
         <>
           <CuteCard variant="pink" style={styles.formCard}>
-            <Text style={styles.formTitle}>Log Weight ⚖️</Text>
+            <Text style={styles.formTitle}>{t('health_log_weight')}</Text>
             <View style={styles.row}>
               <View style={{ flex: 2 }}>
                 <CuteInput
                   value={newWeight}
                   onChangeText={setNewWeight}
-                  placeholder="Weight"
+                  placeholder={t('health_weight_placeholder')}
                   keyboardType="decimal-pad"
                 />
               </View>
@@ -222,15 +224,15 @@ const HealthTrackerScreen = ({ navigation }) => {
             <CuteInput
               value={weightNote}
               onChangeText={setWeightNote}
-              placeholder="Notes (optional)"
+              placeholder={t('health_notes_placeholder')}
             />
-            <CuteButton title="📏 Log Weight" onPress={handleAddWeight} fullWidth />
+            <CuteButton title={t('health_log_weight_btn')} onPress={handleAddWeight} fullWidth />
           </CuteCard>
 
           {/* Weight Chart (simple text-based) */}
           {weightLogs.length > 0 && (
             <CuteCard>
-              <Text style={styles.chartTitle}>Weight History</Text>
+              <Text style={styles.chartTitle}>{t('health_weight_history')}</Text>
               {weightLogs.slice(0, 10).map((log, i) => {
                 const maxW = Math.max(...weightLogs.map(l => l.weight));
                 const pct = (log.weight / maxW) * 100;
@@ -255,8 +257,8 @@ const HealthTrackerScreen = ({ navigation }) => {
       {activeTab === 'symptoms' && (
         <>
           <CuteCard variant="mint" style={styles.formCard}>
-            <Text style={styles.formTitle}>Log Symptoms 🩺</Text>
-            <Text style={styles.formHint}>Select all symptoms you've noticed today:</Text>
+            <Text style={styles.formTitle}>{t('health_log_symptoms')}</Text>
+            <Text style={styles.formHint}>{t('health_symptoms_hint')}</Text>
             <View style={styles.symptomGrid}>
               {SYMPTOM_OPTIONS.map(sym => (
                 <TouchableOpacity
@@ -278,16 +280,16 @@ const HealthTrackerScreen = ({ navigation }) => {
             <CuteInput
               value={symptomNotes}
               onChangeText={setSymptomNotes}
-              placeholder="Additional notes..."
+              placeholder={t('health_symptoms_notes')}
               multiline
             />
-            <CuteButton title="📋 Log Symptoms" onPress={handleLogSymptoms} fullWidth variant="success" />
+            <CuteButton title={t('health_log_symptoms_btn')} onPress={handleLogSymptoms} fullWidth variant="success" />
           </CuteCard>
 
           {/* Symptom History */}
           {healthLogs.filter(l => l.type === 'symptom').length > 0 && (
             <CuteCard>
-              <Text style={styles.chartTitle}>Recent Symptoms</Text>
+              <Text style={styles.chartTitle}>{t('health_recent_symptoms')}</Text>
               {healthLogs.filter(l => l.type === 'symptom').slice(0, 15).map(log => {
                 const sym = SYMPTOM_OPTIONS.find(s => s.id === log.value);
                 return (
@@ -312,31 +314,31 @@ const HealthTrackerScreen = ({ navigation }) => {
       {activeTab === 'vaccines' && (
         <>
           <CuteCard variant="lavender" style={styles.formCard}>
-            <Text style={styles.formTitle}>Add Vaccination 💉</Text>
+            <Text style={styles.formTitle}>{t('health_add_vaccine')}</Text>
             <CuteInput
-              label="Vaccine Name"
+              label={t('health_vaccine_name')}
               value={vacName}
               onChangeText={setVacName}
-              placeholder="e.g., Rabies, DHPP, FVRCP"
+              placeholder={t('health_vaccine_placeholder')}
               required
             />
             <CuteInput
-              label="Next Due Date"
+              label={t('health_vaccine_due')}
               value={vacNextDue}
               onChangeText={setVacNextDue}
-              placeholder="YYYY-MM-DD (optional)"
+              placeholder={t('health_vaccine_due_placeholder')}
             />
-            <CuteButton title="💉 Add Vaccination" onPress={handleAddVaccination} fullWidth variant="secondary" />
+            <CuteButton title={t('health_add_vaccine_btn')} onPress={handleAddVaccination} fullWidth variant="secondary" />
           </CuteCard>
 
           {vaccinations.length > 0 && (
             <CuteCard>
-              <Text style={styles.chartTitle}>Vaccination Records</Text>
+              <Text style={styles.chartTitle}>{t('health_vaccine_records')}</Text>
               {vaccinations.map(vac => (
                 <View key={vac.id} style={styles.vacRow}>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.vacName}>{vac.name}</Text>
-                    <Text style={styles.vacDate}>Given: {new Date(vac.date_given).toLocaleDateString()}</Text>
+                    <Text style={styles.vacDate}>{t('health_vaccine_given', { date: new Date(vac.date_given).toLocaleDateString() })}</Text>
                   </View>
                   {vac.next_due_date ? (
                     <View style={[
@@ -344,7 +346,7 @@ const HealthTrackerScreen = ({ navigation }) => {
                       new Date(vac.next_due_date) < new Date() ? styles.dueOverdue : styles.dueUpcoming,
                     ]}>
                       <Text style={styles.dueText}>
-                        {new Date(vac.next_due_date) < new Date() ? '⚠️ Overdue' : `📅 Due ${new Date(vac.next_due_date).toLocaleDateString()}`}
+                        {new Date(vac.next_due_date) < new Date() ? t('health_vaccine_overdue') : t('health_vaccine_due_label', { date: new Date(vac.next_due_date).toLocaleDateString() })}
                       </Text>
                     </View>
                   ) : null}

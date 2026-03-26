@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { View, Text, StyleSheet } from 'react-native';
 import { COLORS, FONTS, SHADOWS } from '../constants/theme';
+import { useLanguage } from '../context/LanguageContext';
 
 // Screens
 import HomeScreen from '../screens/HomeScreen';
@@ -108,6 +109,7 @@ const TabIcon = ({ emoji, label, focused }) => (
 // ==================== MAIN NAVIGATOR ====================
 
 const AppNavigator = () => {
+  const { t } = useLanguage();
   return (
     <Tab.Navigator
       screenOptions={{
@@ -122,42 +124,42 @@ const AppNavigator = () => {
         name="HomeTab"
         component={HomeStack}
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon emoji="🏠" label="Home" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon emoji="🏠" label={t('tab_home')} focused={focused} />,
         }}
       />
       <Tab.Screen
         name="PetsTab"
         component={PetsStack}
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon emoji="🐾" label="Pets" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon emoji="🐾" label={t('tab_pets')} focused={focused} />,
         }}
       />
       <Tab.Screen
         name="MedsTab"
         component={MedicationsStack}
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon emoji="💊" label="Meds" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon emoji="💊" label={t('tab_meds')} focused={focused} />,
         }}
       />
       <Tab.Screen
         name="PriceTab"
         component={PriceStack}
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon emoji="💰" label="Prices" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon emoji="💰" label={t('tab_prices')} focused={focused} />,
         }}
       />
       <Tab.Screen
         name="HealthTab"
         component={HealthStack}
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon emoji="📊" label="Health" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon emoji="📊" label={t('tab_health')} focused={focused} />,
         }}
       />
       <Tab.Screen
         name="SettingsTab"
         component={SettingsStack}
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon emoji="⚙️" label="More" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon emoji="⚙️" label={t('tab_more')} focused={focused} />,
         }}
       />
     </Tab.Navigator>

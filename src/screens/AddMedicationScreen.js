@@ -8,12 +8,14 @@ import CuteInput from '../components/CuteInput';
 import CuteButton from '../components/CuteButton';
 import CuteCard from '../components/CuteCard';
 import { useApp } from '../context/AppContext';
+import { useLanguage } from '../context/LanguageContext';
 import * as DB from '../database/database';
 import { scheduleNotificationsForMedication, sendTestNotification } from '../utils/notifications';
 
 const AddMedicationScreen = ({ navigation, route }) => {
   const preselectedPetId = route?.params?.petId;
   const { pets, refreshAll } = useApp();
+  const { t } = useLanguage();
 
   const [selectedPetId, setSelectedPetId] = useState(preselectedPetId || null);
   const [name, setName] = useState('');
@@ -73,11 +75,11 @@ const AddMedicationScreen = ({ navigation, route }) => {
 
   const handleSave = async () => {
     if (!selectedPetId) {
-      Alert.alert('Oops! 🐾', 'Please select a pet');
+      Alert.alert(t('oops'), t('add_med_no_pet'));
       return;
     }
     if (!name.trim()) {
-      Alert.alert('Oops! 💊', 'Please enter the medication name');
+      Alert.alert(t('oops'), t('add_med_no_name'));
       return;
     }
 
@@ -123,12 +125,12 @@ const AddMedicationScreen = ({ navigation, route }) => {
 
       await refreshAll();
       Alert.alert(
-        'Medication Added! 💊',
-        `${name} has been added. You'll receive reminders at the scheduled times.`,
-        [{ text: 'Great! ✨', onPress: () => navigation.goBack() }]
+        t('add_med_saved_title'),
+        t('add_med_saved_msg'),
+        [{ text: t('add_med_saved_ok'), onPress: () => navigation.goBack() }]
       );
     } catch (e) {
-      Alert.alert('Error', 'Failed to save medication. Please try again.');
+      Alert.alert(t('error'), t('add_med_error'));
       console.error(e);
     } finally {
       setSaving(false);
@@ -142,7 +144,7 @@ const AddMedicationScreen = ({ navigation, route }) => {
     >
       <ScrollView contentContainerStyle={styles.content}>
         {/* Pet Selection */}
-        <Text style={styles.sectionTitle}>Select Pet 🐾</Text>
+        <Text style={styles.sectionTitle}>{t('add_med_select_pet')}</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.petScroller}>
           {pets.map(pet => (
             <TouchableOpacity
@@ -161,7 +163,7 @@ const AddMedicationScreen = ({ navigation, route }) => {
         </ScrollView>
 
         {/* Medication Name with Autocomplete */}
-        <Text style={styles.sectionTitle}>Medication Info 💊</Text>
+        <Text style={styles.sectionTitle}>{t('add_med_info')}</Text>
         <CuteInput
           label="Medication Name"
           icon="💊"
@@ -170,7 +172,7 @@ const AddMedicationScreen = ({ navigation, route }) => {
             setName(val);
             setShowSuggestions(val.length >= 2);
           }}
-          placeholder="e.g., Heartgard Plus, Apoquel"
+          placeholder={t('add_med_name_placeholder')}
           required
         />
 
@@ -200,7 +202,7 @@ const AddMedicationScreen = ({ navigation, route }) => {
         <View style={styles.row}>
           <View style={{ flex: 2 }}>
             <CuteInput
-              label="Dosage"
+              label={t('add_med_dosage_label')}
               icon="📏"
               value={dosage}
               onChangeText={setDosage}
@@ -222,7 +224,7 @@ const AddMedicationScreen = ({ navigation, route }) => {
         </View>
 
         {/* Frequency */}
-        <Text style={styles.fieldLabel}>⏰ Frequency</Text>
+        <Text style={styles.fieldLabel}>{t('add_med_frequency')}</Text>
         <View style={styles.freqGrid}>
           {FREQUENCY_OPTIONS.filter(f => f.id !== 'custom').map(freq => (
             <TouchableOpacity
@@ -238,7 +240,7 @@ const AddMedicationScreen = ({ navigation, route }) => {
         </View>
 
         {/* Times of Day */}
-        <Text style={styles.fieldLabel}>🕐 Time(s) of Day</Text>
+        <Text style={styles.fieldLabel}>{t('add_med_times')}</Text>
         {timesOfDay.map((time, index) => (
           <CuteInput
             key={index}
@@ -250,11 +252,11 @@ const AddMedicationScreen = ({ navigation, route }) => {
         ))}
 
         {/* Dates */}
-        <Text style={styles.sectionTitle}>Duration 📅</Text>
+        <Text style={styles.sectionTitle}>{t('add_med_duration')}</Text>
         <View style={styles.row}>
           <View style={{ flex: 1 }}>
             <CuteInput
-              label="Start Date"
+              label={t('add_med_start')}
               icon="📅"
               value={startDate}
               onChangeText={setStartDate}
@@ -263,52 +265,52 @@ const AddMedicationScreen = ({ navigation, route }) => {
           </View>
           <View style={{ flex: 1 }}>
             <CuteInput
-              label="End Date (optional)"
+              label={t('add_med_end')}
               icon="🏁"
               value={endDate}
               onChangeText={setEndDate}
               placeholder="YYYY-MM-DD"
-              helper="Leave empty for ongoing"
+              helper={t('add_med_end_helper')}
             />
           </View>
         </View>
 
         {/* Supply Tracking */}
-        <Text style={styles.sectionTitle}>Supply Tracking 📦</Text>
+        <Text style={styles.sectionTitle}>{t('add_med_supply')}</Text>
         <View style={styles.row}>
           <View style={{ flex: 1 }}>
             <CuteInput
-              label="Total Supply"
+              label={t('add_med_total_supply')}
               icon="📦"
               value={totalSupply}
               onChangeText={setTotalSupply}
               placeholder="e.g., 30"
               keyboardType="numeric"
-              helper="Number of doses"
+              helper={t('add_med_supply_helper')}
             />
           </View>
           <View style={{ flex: 1 }}>
             <CuteInput
-              label="Remind to Refill At"
+              label={t('add_med_refill_at')}
               icon="🔔"
               value={refillAt}
               onChangeText={setRefillAt}
               placeholder="5"
               keyboardType="numeric"
-              helper="Doses remaining"
+              helper={t('add_med_refill_helper')}
             />
           </View>
         </View>
 
         {/* Special Instructions */}
-        <Text style={styles.sectionTitle}>Special Instructions 📝</Text>
+        <Text style={styles.sectionTitle}>{t('add_med_instructions')}</Text>
 
         <TouchableOpacity
           style={[styles.toggleRow, withFood && styles.toggleRowActive]}
           onPress={() => setWithFood(!withFood)}
         >
           <Text style={styles.toggleEmoji}>🍽️</Text>
-          <Text style={styles.toggleText}>Give with food</Text>
+          <Text style={styles.toggleText}>{t('add_med_with_food')}</Text>
           <View style={[styles.toggleSwitch, withFood && styles.toggleSwitchOn]}>
             <View style={[styles.toggleKnob, withFood && styles.toggleKnobOn]} />
           </View>
@@ -319,14 +321,14 @@ const AddMedicationScreen = ({ navigation, route }) => {
           icon="📝"
           value={notes}
           onChangeText={setNotes}
-          placeholder="Any special instructions, side effects to watch for..."
+          placeholder={t('add_med_notes_placeholder')}
           multiline
           numberOfLines={3}
         />
 
         {/* Save */}
         <CuteButton
-          title="💊 Add Medication"
+          title={t('add_med_save_btn')}
           onPress={handleSave}
           loading={saving}
           fullWidth

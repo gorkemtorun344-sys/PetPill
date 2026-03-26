@@ -6,6 +6,7 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import { COLORS, SPACING, FONTS, SHADOWS, RADIUS } from '../constants/theme';
 import { useApp } from '../context/AppContext';
+import { useLanguage } from '../context/LanguageContext';
 import PetAvatar from '../components/PetAvatar';
 import MedicationCard from '../components/MedicationCard';
 import CuteCard from '../components/CuteCard';
@@ -17,6 +18,7 @@ const HomeScreen = ({ navigation }) => {
     pets, activePet, setActivePet, todaySchedule,
     dashboardStats, refreshAll, markMedication, isLoading,
   } = useApp();
+  const { t } = useLanguage();
   const [refreshing, setRefreshing] = useState(false);
   const [streak, setStreak] = useState(0);
   const [upcomingApts, setUpcomingApts] = useState([]);
@@ -52,44 +54,44 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const handleTake = (logId) => {
-    Alert.alert('Give Medication? 💊', 'Mark this medication as given?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: '✅ Yes, Given!', onPress: () => markMedication(logId, 'taken') },
+    Alert.alert(t('home_mark_given_title'), t('home_mark_given_msg'), [
+      { text: t('cancel'), style: 'cancel' },
+      { text: t('home_given_btn'), onPress: () => markMedication(logId, 'taken') },
     ]);
   };
 
   const handleSkip = (logId) => {
-    Alert.alert('Skip Medication? ⏭️', 'Are you sure you want to skip this dose?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Skip', style: 'destructive', onPress: () => markMedication(logId, 'skipped') },
+    Alert.alert(t('home_skip_title'), t('home_skip_msg'), [
+      { text: t('cancel'), style: 'cancel' },
+      { text: t('home_skip_btn'), style: 'destructive', onPress: () => markMedication(logId, 'skipped') },
     ]);
   };
 
   const handleSnooze = (logId) => {
-    Alert.alert('Snooze Reminder ⏰', 'Snooze for how long?', [
-      { text: '5 minutes', onPress: () => Alert.alert('Snoozed! ⏰', 'You\'ll be reminded in 5 minutes') },
-      { text: '15 minutes', onPress: () => Alert.alert('Snoozed! ⏰', 'You\'ll be reminded in 15 minutes') },
-      { text: '30 minutes', onPress: () => Alert.alert('Snoozed! ⏰', 'You\'ll be reminded in 30 minutes') },
-      { text: 'Cancel', style: 'cancel' },
+    Alert.alert(t('home_snooze_title'), t('home_snooze_msg'), [
+      { text: t('home_snooze_5'), onPress: () => Alert.alert('Snoozed! ⏰', 'You\'ll be reminded in 5 minutes') },
+      { text: t('home_snooze_15'), onPress: () => Alert.alert('Snoozed! ⏰', 'You\'ll be reminded in 15 minutes') },
+      { text: t('home_snooze_30'), onPress: () => Alert.alert('Snoozed! ⏰', 'You\'ll be reminded in 30 minutes') },
+      { text: t('cancel'), style: 'cancel' },
     ]);
   };
 
   const callEmergency = () => {
     Alert.alert(
-      '🚨 Emergency Poison Hotline',
-      'Call ASPCA Animal Poison Control?\n\n(888) 426-4435\n\nNote: A consultation fee may apply.',
+      t('home_emergency_title'),
+      t('home_emergency_msg'),
       [
-        { text: 'Cancel', style: 'cancel' },
-        { text: '📞 Call Now', onPress: () => Linking.openURL('tel:8884264435') },
+        { text: t('cancel'), style: 'cancel' },
+        { text: t('home_call_now'), onPress: () => Linking.openURL('tel:8884264435') },
       ]
     );
   };
 
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return 'Good Morning';
-    if (hour < 17) return 'Good Afternoon';
-    return 'Good Evening';
+    if (hour < 12) return t('good_morning');
+    if (hour < 17) return t('good_afternoon');
+    return t('good_evening');
   };
 
   const todayStr = new Date().toLocaleDateString('en-US', {
@@ -102,9 +104,9 @@ const HomeScreen = ({ navigation }) => {
       <View style={styles.container}>
         <EmptyState
           emoji="🐾"
-          title="Welcome to PetPill!"
-          message="Add your first pet to start managing their medications and health."
-          buttonTitle="+ Add Your Pet"
+          title={t('home_welcome_title')}
+          message={t('home_welcome_desc')}
+          buttonTitle={t('home_add_pet_btn')}
           onPress={() => navigation.navigate('PetsTab', { screen: 'AddPet' })}
         />
       </View>
@@ -128,7 +130,7 @@ const HomeScreen = ({ navigation }) => {
           <Text style={styles.date}>{todayStr}</Text>
         </View>
         <TouchableOpacity style={styles.emergencyBtn} onPress={callEmergency}>
-          <Text style={styles.emergencyText}>🚨 SOS</Text>
+          <Text style={styles.emergencyText}>{t('home_sos')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -158,29 +160,29 @@ const HomeScreen = ({ navigation }) => {
         <CuteCard style={styles.statCard} variant="pink">
           <Text style={styles.statEmoji}>💊</Text>
           <Text style={styles.statNumber}>{dashboardStats.todayTaken || 0}/{dashboardStats.todayTotal || 0}</Text>
-          <Text style={styles.statLabel}>Today</Text>
+          <Text style={styles.statLabel}>{t('home_today')}</Text>
         </CuteCard>
         <CuteCard style={styles.statCard} variant="mint">
           <Text style={styles.statEmoji}>🔥</Text>
           <Text style={styles.statNumber}>{streak}</Text>
-          <Text style={styles.statLabel}>Day Streak</Text>
+          <Text style={styles.statLabel}>{t('home_day_streak')}</Text>
         </CuteCard>
         <CuteCard style={styles.statCard} variant="lavender">
           <Text style={styles.statEmoji}>🐾</Text>
           <Text style={styles.statNumber}>{dashboardStats.petCount || 0}</Text>
-          <Text style={styles.statLabel}>Pets</Text>
+          <Text style={styles.statLabel}>{t('home_pets')}</Text>
         </CuteCard>
       </View>
 
       {/* Completion Bar */}
       {dashboardStats.todayTotal > 0 && (
         <CuteCard style={styles.progressCard}>
-          <Text style={styles.progressTitle}>Today's Progress 🎯</Text>
+          <Text style={styles.progressTitle}>{t('home_progress')}</Text>
           <View style={styles.progressBar}>
             <View style={[styles.progressFill, { width: `${completionRate}%` }]} />
           </View>
           <Text style={styles.progressText}>
-            {completionRate}% complete {completionRate === 100 ? '🎉 Perfect!' : ''}
+            {completionRate}{completionRate === 100 ? t('home_perfect') : t('home_complete')}
           </Text>
         </CuteCard>
       )}
@@ -188,7 +190,7 @@ const HomeScreen = ({ navigation }) => {
       {/* Refill Alerts */}
       {refillAlerts.length > 0 && (
         <CuteCard variant="warning" style={styles.alertCard}>
-          <Text style={styles.alertTitle}>⚠️ Refill Needed</Text>
+          <Text style={styles.alertTitle}>{t('home_refill_needed')}</Text>
           {refillAlerts.map(med => (
             <Text key={med.id} style={styles.alertText}>
               {med.name} for {med.pet_name} — {med.remaining_supply} doses left
@@ -198,23 +200,23 @@ const HomeScreen = ({ navigation }) => {
             onPress={() => navigation.navigate('PriceTab')}
             style={styles.alertAction}
           >
-            <Text style={styles.alertActionText}>Compare Prices →</Text>
+            <Text style={styles.alertActionText}>{t('home_compare_prices')}</Text>
           </TouchableOpacity>
         </CuteCard>
       )}
 
       {/* Today's Schedule */}
       <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Today's Schedule 📋</Text>
+        <Text style={styles.sectionTitle}>{t('home_schedule')}</Text>
         <TouchableOpacity onPress={() => navigation.navigate('MedsTab')}>
-          <Text style={styles.seeAll}>See All →</Text>
+          <Text style={styles.seeAll}>{t('home_see_all')}</Text>
         </TouchableOpacity>
       </View>
 
       {todaySchedule.length === 0 ? (
         <CuteCard variant="pink">
           <Text style={{ textAlign: 'center', color: COLORS.textLight, fontSize: FONTS.sizes.md }}>
-            🎉 No medications scheduled for today!
+            {t('home_no_meds')}
           </Text>
         </CuteCard>
       ) : (
@@ -233,7 +235,7 @@ const HomeScreen = ({ navigation }) => {
       {upcomingApts.length > 0 && (
         <>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Upcoming Vet Visits 🏥</Text>
+            <Text style={styles.sectionTitle}>{t('home_vet_visits')}</Text>
           </View>
           {upcomingApts.map(apt => (
             <CuteCard key={apt.id} variant="peach">
