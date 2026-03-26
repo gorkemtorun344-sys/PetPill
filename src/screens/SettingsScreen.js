@@ -13,26 +13,25 @@ import { useApp } from '../context/AppContext';
 import { useLanguage } from '../context/LanguageContext';
 import * as DB from '../database/database';
 
-// Feature rows shown in the premium card
-const FREE_FEATURES = [
-  { emoji: '🐾', text: 'Up to 2 pets' },
-  { emoji: '💊', text: 'Basic medication tracking' },
-  { emoji: '🔔', text: 'Medication reminders' },
-  { emoji: '📋', text: 'Basic health log' },
-];
-
-const PREMIUM_FEATURES = [
-  { emoji: '🐾', text: 'Unlimited pets' },
-  { emoji: '📊', text: 'Advanced health charts & reports' },
-  { emoji: '💰', text: 'Price drop alerts for meds' },
-  { emoji: '📄', text: 'PDF health report for vet visits' },
-  { emoji: '👨‍👩‍👧', text: 'Unlimited caregiver sharing' },
-  { emoji: '🚫', text: 'Completely ad-free' },
-];
 
 const SettingsScreen = ({ navigation }) => {
   const { isPremium, setIsPremium, pets, refreshAll } = useApp();
   const { t } = useLanguage();
+
+  const FREE_FEATURES = [
+    { emoji: '🐾', text: t('pf_f1') },
+    { emoji: '💊', text: t('pf_f2') },
+    { emoji: '🔔', text: t('pf_f3') },
+    { emoji: '📋', text: t('pf_f4') },
+  ];
+  const PREMIUM_FEATURES = [
+    { emoji: '🐾', text: t('pf_p1') },
+    { emoji: '📊', text: t('pf_p2') },
+    { emoji: '💰', text: t('pf_p3') },
+    { emoji: '📄', text: t('pf_p4') },
+    { emoji: '👨‍👩‍👧', text: t('pf_p5') },
+    { emoji: '🚫', text: t('pf_p6') },
+  ];
   const [caregivers, setCaregivers] = useState([]);
   const [showAddCaregiver, setShowAddCaregiver] = useState(false);
   const [cgName, setCgName] = useState('');
@@ -88,17 +87,19 @@ const SettingsScreen = ({ navigation }) => {
   };
 
   const handleUpgrade = () => {
-    const price = selectedPlan === 'yearly' ? '$39.99/year' : '$4.99/month';
+    const isYearly = selectedPlan === 'yearly';
+    const price = isYearly ? '$39.99' : '$4.99';
+    const period = isYearly ? t('premium_yearly') : t('premium_monthly');
     Alert.alert(
-      '🌟 Unlock PetPill Premium',
-      `You selected the ${selectedPlan === 'yearly' ? 'Annual (Save 33%)' : 'Monthly'} plan at ${price}.\n\nIn production this opens Google Play Billing.`,
+      `👑 ${t('premium_title')}`,
+      `${price} ${period}`,
       [
         { text: t('settings_maybe_later'), style: 'cancel' },
         {
-          text: '🌟 Unlock Now',
+          text: t('premium_unlock'),
           onPress: () => {
             setIsPremium(true);
-            Alert.alert('Welcome to Premium! 🎉', t('settings_welcome_premium'));
+            Alert.alert('🎉', t('settings_welcome_premium'));
           },
         },
       ]
@@ -107,9 +108,7 @@ const SettingsScreen = ({ navigation }) => {
 
   const handleShare = async () => {
     try {
-      await Share.share({
-        message: 'I use PetPill to track my pet\'s medications and health! It\'s free and super cute 🐾💊 Download it here: [App Store Link]',
-      });
+      await Share.share({ message: t('settings_share_message') });
     } catch (e) { console.error(e); }
   };
 
@@ -157,19 +156,19 @@ const SettingsScreen = ({ navigation }) => {
 
             {/* Badge */}
             <View style={styles.mostPopularBadge}>
-              <Text style={styles.mostPopularText}>⭐ MOST POPULAR</Text>
+              <Text style={styles.mostPopularText}>{t('premium_most_popular')}</Text>
             </View>
 
             {/* Crown & title */}
             <Text style={styles.premiumCrown}>👑</Text>
-            <Text style={styles.premiumTitle}>PetPill Premium</Text>
-            <Text style={styles.premiumTagline}>Everything your pet deserves 🐾</Text>
+            <Text style={styles.premiumTitle}>{t('premium_title')}</Text>
+            <Text style={styles.premiumTagline}>{t('premium_tagline')}</Text>
 
             {/* Free vs Premium comparison */}
             <View style={styles.compareBox}>
               {/* Free column */}
               <View style={styles.compareCol}>
-                <Text style={styles.compareHeader}>Free</Text>
+                <Text style={styles.compareHeader}>{t('premium_free_col')}</Text>
                 {FREE_FEATURES.map((f, i) => (
                   <View key={i} style={styles.compareRow}>
                     <Text style={styles.compareCheckFree}>✓</Text>
@@ -194,13 +193,13 @@ const SettingsScreen = ({ navigation }) => {
                 style={styles.compareColPremium}
               >
                 <View style={styles.premiumColHeader}>
-                  <Text style={styles.compareHeaderPremium}>Premium</Text>
+                  <Text style={styles.compareHeaderPremium}>{t('premium_pro_col')}</Text>
                   <Text style={styles.premiumColBadge}>✦</Text>
                 </View>
                 {FREE_FEATURES.map((f, i) => (
                   <View key={i} style={styles.compareRow}>
                     <Text style={styles.compareCheckPremium}>✓</Text>
-                    <Text style={styles.compareTextPremium}>{f.text.replace('Up to 2', 'Unlimited')}</Text>
+                    <Text style={styles.compareTextPremium}>{t(`pf_p${i + 1}`) || f.text}</Text>
                   </View>
                 ))}
                 {PREMIUM_FEATURES.slice(0, 4).map((f, i) => (
@@ -228,7 +227,7 @@ const SettingsScreen = ({ navigation }) => {
                 onPress={() => setSelectedPlan('monthly')}
               >
                 <Text style={styles.planPrice}>$4.99</Text>
-                <Text style={styles.planPeriod}>per month</Text>
+                <Text style={styles.planPeriod}>{t('premium_monthly')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -236,11 +235,11 @@ const SettingsScreen = ({ navigation }) => {
                 onPress={() => setSelectedPlan('yearly')}
               >
                 <View style={styles.saveBadge}>
-                  <Text style={styles.saveText}>SAVE 33%</Text>
+                  <Text style={styles.saveText}>{t('premium_save_pct')}</Text>
                 </View>
                 <Text style={styles.planPrice}>$39.99</Text>
-                <Text style={styles.planPeriod}>per year</Text>
-                <Text style={styles.planEquiv}>≈ $3.33/mo</Text>
+                <Text style={styles.planPeriod}>{t('premium_yearly')}</Text>
+                <Text style={styles.planEquiv}>{t('premium_monthly_equiv')}</Text>
               </TouchableOpacity>
             </View>
 
@@ -252,13 +251,13 @@ const SettingsScreen = ({ navigation }) => {
                 end={{ x: 1, y: 0 }}
                 style={styles.ctaButton}
               >
-                <Text style={styles.ctaText}>🌟 Unlock Premium Now</Text>
+                <Text style={styles.ctaText}>{t('premium_unlock')}</Text>
               </LinearGradient>
             </TouchableOpacity>
 
             {/* Social proof */}
-            <Text style={styles.socialProof}>❤️ Loved by 10,000+ happy pet owners</Text>
-            <Text style={styles.cancelNote}>Cancel anytime · No commitment</Text>
+            <Text style={styles.socialProof}>{t('premium_proof')}</Text>
+            <Text style={styles.cancelNote}>{t('premium_cancel')}</Text>
           </LinearGradient>
         </View>
       ) : (
@@ -274,7 +273,7 @@ const SettingsScreen = ({ navigation }) => {
               <Text key={i} style={styles.premiumActiveStar}>{s}</Text>
             ))}
           </View>
-          <Text style={styles.premiumActiveDesc}>You have access to all premium features 🎉</Text>
+          <Text style={styles.premiumActiveDesc}>{t('premium_active_desc')}</Text>
         </LinearGradient>
       )}
 
