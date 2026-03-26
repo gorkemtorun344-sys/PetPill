@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  Alert, Linking, Share, Animated,
+  Alert, Linking, Share,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFocusEffect } from '@react-navigation/native';
@@ -13,6 +13,23 @@ import { useApp } from '../context/AppContext';
 import { useLanguage } from '../context/LanguageContext';
 import * as DB from '../database/database';
 
+// Feature rows shown in the premium card
+const FREE_FEATURES = [
+  { emoji: '🐾', text: 'Up to 2 pets' },
+  { emoji: '💊', text: 'Basic medication tracking' },
+  { emoji: '🔔', text: 'Medication reminders' },
+  { emoji: '📋', text: 'Basic health log' },
+];
+
+const PREMIUM_FEATURES = [
+  { emoji: '🐾', text: 'Unlimited pets' },
+  { emoji: '📊', text: 'Advanced health charts & reports' },
+  { emoji: '💰', text: 'Price drop alerts for meds' },
+  { emoji: '📄', text: 'PDF health report for vet visits' },
+  { emoji: '👨‍👩‍👧', text: 'Unlimited caregiver sharing' },
+  { emoji: '🚫', text: 'Completely ad-free' },
+];
+
 const SettingsScreen = ({ navigation }) => {
   const { isPremium, setIsPremium, pets, refreshAll } = useApp();
   const { t } = useLanguage();
@@ -21,6 +38,7 @@ const SettingsScreen = ({ navigation }) => {
   const [cgName, setCgName] = useState('');
   const [cgPhone, setCgPhone] = useState('');
   const [cgRelation, setCgRelation] = useState('');
+  const [selectedPlan, setSelectedPlan] = useState('yearly'); // 'monthly' | 'yearly'
 
   useFocusEffect(
     useCallback(() => {
@@ -70,15 +88,15 @@ const SettingsScreen = ({ navigation }) => {
   };
 
   const handleUpgrade = () => {
+    const price = selectedPlan === 'yearly' ? '$39.99/year' : '$4.99/month';
     Alert.alert(
-      t('settings_upgrade_title'),
-      t('settings_upgrade_msg'),
+      '🌟 Unlock PetPill Premium',
+      `You selected the ${selectedPlan === 'yearly' ? 'Annual (Save 33%)' : 'Monthly'} plan at ${price}.\n\nIn production this opens Google Play Billing.`,
       [
         { text: t('settings_maybe_later'), style: 'cancel' },
         {
-          text: t('settings_upgrade_btn'),
+          text: '🌟 Unlock Now',
           onPress: () => {
-            // In production: integrate with App Store / Google Play billing
             setIsPremium(true);
             Alert.alert('Welcome to Premium! 🎉', t('settings_welcome_premium'));
           },
@@ -103,9 +121,7 @@ const SettingsScreen = ({ navigation }) => {
         { text: t('cancel'), style: 'cancel' },
         {
           text: '📄 Export PDF',
-          onPress: () => {
-            Alert.alert(t('coming_soon'), t('settings_export_coming'));
-          },
+          onPress: () => Alert.alert(t('coming_soon'), t('settings_export_coming')),
         },
       ]
     );
@@ -126,37 +142,128 @@ const SettingsScreen = ({ navigation }) => {
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Text style={styles.title}>{t('settings_header')}</Text>
 
-      {/* Premium Banner */}
-      {!isPremium && (
-        <TouchableOpacity onPress={handleUpgrade} activeOpacity={0.9} style={styles.premiumCardWrapper}>
+      {/* ====== PREMIUM CARD ====== */}
+      {!isPremium ? (
+        <View style={styles.premiumWrapper}>
           <LinearGradient
-            colors={['#1a1a2e', '#16213e', '#0f3460']}
-            start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+            colors={['#2D1B69', '#5B2D8E', '#9B4FD4']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
             style={styles.premiumCard}
           >
-            {/* Stars decoration */}
-            <Text style={styles.premiumStarTL}>✦</Text>
-            <Text style={styles.premiumStarTR}>✦</Text>
-            <Text style={styles.premiumStarBL}>✦</Text>
-            <View style={styles.premiumInner}>
-              <Text style={styles.premiumCrown}>👑</Text>
-              <Text style={styles.premiumTitle}>{t('settings_premium_title')}</Text>
-              <Text style={styles.premiumDesc}>{t('settings_premium_desc')}</Text>
+            {/* Decorative blobs */}
+            <View style={styles.blobTL} />
+            <View style={styles.blobBR} />
+
+            {/* Badge */}
+            <View style={styles.mostPopularBadge}>
+              <Text style={styles.mostPopularText}>⭐ MOST POPULAR</Text>
+            </View>
+
+            {/* Crown & title */}
+            <Text style={styles.premiumCrown}>👑</Text>
+            <Text style={styles.premiumTitle}>PetPill Premium</Text>
+            <Text style={styles.premiumTagline}>Everything your pet deserves 🐾</Text>
+
+            {/* Free vs Premium comparison */}
+            <View style={styles.compareBox}>
+              {/* Free column */}
+              <View style={styles.compareCol}>
+                <Text style={styles.compareHeader}>Free</Text>
+                {FREE_FEATURES.map((f, i) => (
+                  <View key={i} style={styles.compareRow}>
+                    <Text style={styles.compareCheckFree}>✓</Text>
+                    <Text style={styles.compareText}>{f.text}</Text>
+                  </View>
+                ))}
+                {/* Show locks for premium items in free column */}
+                {PREMIUM_FEATURES.slice(0, 4).map((f, i) => (
+                  <View key={i} style={styles.compareRow}>
+                    <Text style={styles.compareCheckLocked}>🔒</Text>
+                    <Text style={styles.compareTextLocked}>{f.text}</Text>
+                  </View>
+                ))}
+              </View>
+
+              {/* Divider */}
+              <View style={styles.compareDivider} />
+
+              {/* Premium column */}
               <LinearGradient
-                colors={['#FFD700', '#FFA500', '#FFD700']}
-                start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
-                style={styles.premiumPriceBadge}
+                colors={['rgba(255,215,0,0.15)', 'rgba(255,165,0,0.08)']}
+                style={styles.compareColPremium}
               >
-                <Text style={styles.premiumPriceText}>{t('settings_premium_price')}</Text>
+                <View style={styles.premiumColHeader}>
+                  <Text style={styles.compareHeaderPremium}>Premium</Text>
+                  <Text style={styles.premiumColBadge}>✦</Text>
+                </View>
+                {FREE_FEATURES.map((f, i) => (
+                  <View key={i} style={styles.compareRow}>
+                    <Text style={styles.compareCheckPremium}>✓</Text>
+                    <Text style={styles.compareTextPremium}>{f.text.replace('Up to 2', 'Unlimited')}</Text>
+                  </View>
+                ))}
+                {PREMIUM_FEATURES.slice(0, 4).map((f, i) => (
+                  <View key={i} style={styles.compareRow}>
+                    <Text style={styles.compareCheckPremium}>✓</Text>
+                    <Text style={styles.compareTextPremium}>{f.text}</Text>
+                  </View>
+                ))}
               </LinearGradient>
             </View>
-          </LinearGradient>
-        </TouchableOpacity>
-      )}
 
-      {isPremium && (
+            {/* Extra premium features */}
+            <View style={styles.extraFeatures}>
+              {PREMIUM_FEATURES.slice(4).map((f, i) => (
+                <View key={i} style={styles.extraFeatureChip}>
+                  <Text style={styles.extraFeatureText}>{f.emoji} {f.text}</Text>
+                </View>
+              ))}
+            </View>
+
+            {/* Plan selector */}
+            <View style={styles.planRow}>
+              <TouchableOpacity
+                style={[styles.planOption, selectedPlan === 'monthly' && styles.planOptionActive]}
+                onPress={() => setSelectedPlan('monthly')}
+              >
+                <Text style={styles.planPrice}>$4.99</Text>
+                <Text style={styles.planPeriod}>per month</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.planOption, selectedPlan === 'yearly' && styles.planOptionActive]}
+                onPress={() => setSelectedPlan('yearly')}
+              >
+                <View style={styles.saveBadge}>
+                  <Text style={styles.saveText}>SAVE 33%</Text>
+                </View>
+                <Text style={styles.planPrice}>$39.99</Text>
+                <Text style={styles.planPeriod}>per year</Text>
+                <Text style={styles.planEquiv}>≈ $3.33/mo</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* CTA Button */}
+            <TouchableOpacity onPress={handleUpgrade} activeOpacity={0.85} style={styles.ctaWrapper}>
+              <LinearGradient
+                colors={['#FFD700', '#FFA500', '#FF8C00']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.ctaButton}
+              >
+                <Text style={styles.ctaText}>🌟 Unlock Premium Now</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+
+            {/* Social proof */}
+            <Text style={styles.socialProof}>❤️ Loved by 10,000+ happy pet owners</Text>
+            <Text style={styles.cancelNote}>Cancel anytime · No commitment</Text>
+          </LinearGradient>
+        </View>
+      ) : (
         <LinearGradient
-          colors={['#1a1a2e', '#16213e', '#0f3460']}
+          colors={['#2D1B69', '#5B2D8E', '#9B4FD4']}
           start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
           style={styles.premiumActiveCard}
         >
@@ -167,14 +274,13 @@ const SettingsScreen = ({ navigation }) => {
               <Text key={i} style={styles.premiumActiveStar}>{s}</Text>
             ))}
           </View>
+          <Text style={styles.premiumActiveDesc}>You have access to all premium features 🎉</Text>
         </LinearGradient>
       )}
 
       {/* Caregivers */}
       <Text style={styles.sectionTitle}>{t('settings_caregivers')}</Text>
-      <Text style={styles.sectionDesc}>
-        {t('settings_caregivers_desc')}
-      </Text>
+      <Text style={styles.sectionDesc}>{t('settings_caregivers_desc')}</Text>
 
       {caregivers.map(cg => (
         <CuteCard key={cg.id}>
@@ -267,12 +373,17 @@ const SettingsScreen = ({ navigation }) => {
 
       <CuteCard>
         <View style={styles.aboutSection}>
-          <Text style={styles.aboutLogo}>💊🐾</Text>
+          <LinearGradient
+            colors={['#FF6B9D', '#C77DFF']}
+            start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+            style={styles.aboutLogoBadge}
+          >
+            <Text style={styles.aboutLogoPaw}>🐾</Text>
+            <Text style={styles.aboutLogoLetters}>PP</Text>
+          </LinearGradient>
           <Text style={styles.aboutName}>PetPill</Text>
           <Text style={styles.aboutVersion}>{t('settings_version')}</Text>
-          <Text style={styles.aboutDesc}>
-            {t('settings_tagline')}
-          </Text>
+          <Text style={styles.aboutDesc}>{t('settings_tagline')}</Text>
         </View>
       </CuteCard>
 
@@ -331,39 +442,218 @@ const SettingsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
   content: { padding: SPACING.lg },
-  title: { fontSize: FONTS.sizes.title, fontWeight: '800', color: COLORS.text, marginTop: SPACING.sm, marginBottom: SPACING.lg },
-  premiumCardWrapper: { borderRadius: 20, marginBottom: SPACING.lg, overflow: 'hidden' },
+  title: {
+    fontSize: FONTS.sizes.title,
+    fontWeight: '800',
+    color: COLORS.text,
+    marginTop: SPACING.sm,
+    marginBottom: SPACING.lg,
+  },
+
+  // ===== PREMIUM CARD =====
+  premiumWrapper: {
+    borderRadius: 24,
+    marginBottom: SPACING.lg,
+    overflow: 'hidden',
+    shadowColor: '#5B2D8E',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.45,
+    shadowRadius: 20,
+    elevation: 16,
+  },
   premiumCard: {
-    borderRadius: 20,
-    padding: SPACING.xl,
+    borderRadius: 24,
+    padding: SPACING.lg,
     overflow: 'hidden',
     position: 'relative',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.4,
-    shadowRadius: 16,
-    elevation: 12,
   },
-  premiumInner: { alignItems: 'center' },
-  premiumCrown: { fontSize: 52, marginBottom: SPACING.sm },
-  premiumStarTL: { position: 'absolute', top: 12, left: 16, fontSize: 14, color: '#FFD700', opacity: 0.7 },
-  premiumStarTR: { position: 'absolute', top: 8, right: 20, fontSize: 20, color: '#FFD700', opacity: 0.5 },
-  premiumStarBL: { position: 'absolute', bottom: 12, left: 30, fontSize: 10, color: '#FFD700', opacity: 0.6 },
-  premiumTitle: { fontSize: FONTS.sizes.xl, fontWeight: '900', color: '#FFD700', textAlign: 'center', letterSpacing: 0.5 },
-  premiumDesc: { fontSize: FONTS.sizes.md, color: 'rgba(255,255,255,0.75)', textAlign: 'center', marginTop: SPACING.sm },
-  premiumPriceBadge: {
-    marginTop: SPACING.lg,
-    paddingHorizontal: SPACING.xl * 1.5,
-    paddingVertical: SPACING.sm + 2,
+  blobTL: {
+    position: 'absolute',
+    top: -40,
+    left: -40,
+    width: 130,
+    height: 130,
+    borderRadius: 65,
+    backgroundColor: 'rgba(155,79,212,0.3)',
+  },
+  blobBR: {
+    position: 'absolute',
+    bottom: -30,
+    right: -30,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: 'rgba(255,215,0,0.1)',
+  },
+  mostPopularBadge: {
+    alignSelf: 'center',
+    backgroundColor: '#FFD700',
     borderRadius: RADIUS.full,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: 4,
+    marginBottom: SPACING.md,
   },
-  premiumPriceText: { color: '#1a1a2e', fontWeight: '900', fontSize: FONTS.sizes.lg, letterSpacing: 0.5 },
+  mostPopularText: {
+    fontSize: 11,
+    fontWeight: '900',
+    color: '#2D1B69',
+    letterSpacing: 1,
+  },
+  premiumCrown: { textAlign: 'center', fontSize: 48, marginBottom: 4 },
+  premiumTitle: {
+    textAlign: 'center',
+    fontSize: 22,
+    fontWeight: '900',
+    color: '#FFD700',
+    letterSpacing: 0.5,
+  },
+  premiumTagline: {
+    textAlign: 'center',
+    fontSize: FONTS.sizes.sm,
+    color: 'rgba(255,255,255,0.7)',
+    marginBottom: SPACING.lg,
+    marginTop: 4,
+  },
+
+  // Compare box
+  compareBox: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255,255,255,0.07)',
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginBottom: SPACING.md,
+  },
+  compareCol: {
+    flex: 1,
+    padding: SPACING.md,
+  },
+  compareColPremium: {
+    flex: 1,
+    padding: SPACING.md,
+  },
+  compareHeader: {
+    fontSize: FONTS.sizes.sm,
+    fontWeight: '700',
+    color: 'rgba(255,255,255,0.5)',
+    marginBottom: SPACING.sm,
+    textAlign: 'center',
+  },
+  premiumColHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: SPACING.sm,
+  },
+  compareHeaderPremium: {
+    fontSize: FONTS.sizes.sm,
+    fontWeight: '900',
+    color: '#FFD700',
+    textAlign: 'center',
+  },
+  premiumColBadge: {
+    fontSize: 10,
+    color: '#FFD700',
+    marginLeft: 4,
+  },
+  compareDivider: {
+    width: 1,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    marginVertical: SPACING.sm,
+  },
+  compareRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  compareCheckFree: { fontSize: 12, color: 'rgba(255,255,255,0.5)', marginRight: 4, width: 16 },
+  compareCheckLocked: { fontSize: 10, marginRight: 4, width: 16 },
+  compareCheckPremium: { fontSize: 12, color: '#FFD700', fontWeight: '900', marginRight: 4, width: 16 },
+  compareText: { fontSize: 10, color: 'rgba(255,255,255,0.5)', flex: 1 },
+  compareTextLocked: { fontSize: 10, color: 'rgba(255,255,255,0.25)', flex: 1 },
+  compareTextPremium: { fontSize: 10, color: 'rgba(255,255,255,0.9)', fontWeight: '600', flex: 1 },
+
+  // Extra features chips
+  extraFeatures: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+    marginBottom: SPACING.lg,
+  },
+  extraFeatureChip: {
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: RADIUS.full,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(255,215,0,0.3)',
+  },
+  extraFeatureText: { fontSize: 11, color: 'rgba(255,255,255,0.85)', fontWeight: '600' },
+
+  // Plan selector
+  planRow: {
+    flexDirection: 'row',
+    gap: SPACING.sm,
+    marginBottom: SPACING.lg,
+  },
+  planOption: {
+    flex: 1,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    borderRadius: 14,
+    padding: SPACING.md,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.15)',
+    position: 'relative',
+  },
+  planOptionActive: {
+    borderColor: '#FFD700',
+    backgroundColor: 'rgba(255,215,0,0.12)',
+  },
+  saveBadge: {
+    position: 'absolute',
+    top: -10,
+    backgroundColor: '#FF6B9D',
+    borderRadius: RADIUS.full,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  saveText: { fontSize: 9, fontWeight: '900', color: '#fff', letterSpacing: 0.5 },
+  planPrice: { fontSize: 20, fontWeight: '900', color: '#FFD700', marginTop: 4 },
+  planPeriod: { fontSize: 10, color: 'rgba(255,255,255,0.6)', marginTop: 2 },
+  planEquiv: { fontSize: 9, color: 'rgba(255,215,0,0.7)', marginTop: 2 },
+
+  // CTA
+  ctaWrapper: { borderRadius: RADIUS.full, overflow: 'hidden', marginBottom: SPACING.md },
+  ctaButton: {
+    paddingVertical: SPACING.md + 2,
+    borderRadius: RADIUS.full,
+    alignItems: 'center',
+  },
+  ctaText: {
+    fontSize: FONTS.sizes.lg,
+    fontWeight: '900',
+    color: '#1a0a3e',
+    letterSpacing: 0.5,
+  },
+  socialProof: {
+    textAlign: 'center',
+    fontSize: FONTS.sizes.sm,
+    color: 'rgba(255,255,255,0.65)',
+    marginBottom: 4,
+  },
+  cancelNote: {
+    textAlign: 'center',
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.35)',
+  },
+
+  // Premium active
   premiumActiveCard: {
     borderRadius: 20,
     padding: SPACING.xl,
     alignItems: 'center',
     marginBottom: SPACING.lg,
-    shadowColor: '#000',
+    shadowColor: '#5B2D8E',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.3,
     shadowRadius: 12,
@@ -373,6 +663,9 @@ const styles = StyleSheet.create({
   premiumActiveTitle: { fontSize: FONTS.sizes.lg, fontWeight: '800', color: '#FFD700', textAlign: 'center' },
   premiumActiveStars: { flexDirection: 'row', marginTop: SPACING.sm, gap: 6 },
   premiumActiveStar: { fontSize: 14, color: '#FFD700' },
+  premiumActiveDesc: { fontSize: FONTS.sizes.sm, color: 'rgba(255,255,255,0.7)', marginTop: SPACING.sm },
+
+  // Sections
   sectionTitle: {
     fontSize: FONTS.sizes.xl,
     fontWeight: '700',
@@ -381,6 +674,8 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xs,
   },
   sectionDesc: { fontSize: FONTS.sizes.md, color: COLORS.textLight, marginBottom: SPACING.md },
+
+  // Caregivers
   caregiverRow: { flexDirection: 'row', alignItems: 'center' },
   cgName: { fontSize: FONTS.sizes.lg, fontWeight: '700', color: COLORS.text },
   cgRelation: { fontSize: FONTS.sizes.sm, color: COLORS.textLight, marginTop: 2 },
@@ -388,14 +683,27 @@ const styles = StyleSheet.create({
   cgDelete: { fontSize: 20, color: COLORS.textMuted, padding: SPACING.sm },
   formTitle: { fontSize: FONTS.sizes.lg, fontWeight: '700', color: COLORS.text, marginBottom: SPACING.md },
   formActions: { flexDirection: 'row', gap: SPACING.sm },
+
+  // Menu items
   menuItem: { flexDirection: 'row', alignItems: 'center' },
   menuEmoji: { fontSize: 28, marginRight: SPACING.md },
   menuTitle: { fontSize: FONTS.sizes.lg, fontWeight: '600', color: COLORS.text },
   menuDesc: { fontSize: FONTS.sizes.sm, color: COLORS.textLight, marginTop: 2 },
   menuArrow: { fontSize: 28, color: COLORS.textMuted },
+
+  // About
   aboutSection: { alignItems: 'center', paddingVertical: SPACING.md },
-  aboutLogo: { fontSize: 48 },
-  aboutName: { fontSize: FONTS.sizes.xxl, fontWeight: '800', color: COLORS.text, marginTop: SPACING.sm },
+  aboutLogoBadge: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: SPACING.sm,
+  },
+  aboutLogoPaw: { fontSize: 20 },
+  aboutLogoLetters: { fontSize: 12, fontWeight: '900', color: '#FFF', letterSpacing: 2 },
+  aboutName: { fontSize: FONTS.sizes.xxl, fontWeight: '800', color: COLORS.text, marginTop: SPACING.xs },
   aboutVersion: { fontSize: FONTS.sizes.sm, color: COLORS.textMuted },
   aboutDesc: { fontSize: FONTS.sizes.md, color: COLORS.textLight, textAlign: 'center', marginTop: SPACING.sm },
 });

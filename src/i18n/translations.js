@@ -1245,4 +1245,35 @@ translations.fr.terms_b8 = 'Nous pouvons modifier ces conditions à tout moment.
 translations.fr.terms_h9 = '9. Contact';
 translations.fr.terms_b9 = 'Questions sur ces conditions:\n\nsupport@petpill.app';
 
+// ── Price screen extra keys ─────────────────────────────────────────────────
+translations.en.price_location_label  = '📍 Showing prices for ';
+translations.en.price_enter_name      = 'Please enter a medication name';
+translations.en.price_open_store      = 'Open';
+translations.en.price_open_store_msg  = "You'll be taken to {name} to purchase {med}.";
+translations.en.price_open_error      = 'Could not open the store. Please try again.';
+
+translations.tr.price_location_label  = '📍 Fiyatlar için gösteriliyor: ';
+translations.tr.price_enter_name      = 'Lütfen bir ilaç adı girin';
+translations.tr.price_open_store      = 'Aç';
+translations.tr.price_open_store_msg  = "{name} mağazasına giderek {med} satın alacaksınız.";
+translations.tr.price_open_error      = 'Mağaza açılamadı. Lütfen tekrar deneyin.';
+
+translations.de.price_location_label  = '📍 Preise für: ';
+translations.de.price_enter_name      = 'Bitte gib einen Medikamentennamen ein';
+translations.de.price_open_store      = 'Öffnen';
+translations.de.price_open_store_msg  = "Du wirst zu {name} weitergeleitet, um {med} zu kaufen.";
+translations.de.price_open_error      = 'Geschäft konnte nicht geöffnet werden. Bitte erneut versuchen.';
+
+translations.fr.price_location_label  = '📍 Prix pour: ';
+translations.fr.price_enter_name      = 'Veuillez entrer un nom de médicament';
+translations.fr.price_open_store      = 'Ouvrir';
+translations.fr.price_open_store_msg  = "Vous serez redirigé vers {name} pour acheter {med}.";
+translations.fr.price_open_error      = "Impossible d'ouvrir le magasin. Veuillez réessayer.";
+
+translations.ar.price_location_label  = '📍 عرض الأسعار لـ: ';
+translations.ar.price_enter_name      = 'الرجاء إدخال اسم الدواء';
+translations.ar.price_open_store      = 'فتح';
+translations.ar.price_open_store_msg  = 'سيتم نقلك إلى {name} لشراء {med}.';
+translations.ar.price_open_error      = 'تعذر فتح المتجر. يرجى المحاولة مرة أخرى.';
+
 export default translations;
