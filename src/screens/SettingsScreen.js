@@ -1,8 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  Alert, Linking, Share,
+  Alert, Linking, Share, Animated,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useFocusEffect } from '@react-navigation/native';
 import { COLORS, SPACING, FONTS, RADIUS, SHADOWS } from '../constants/theme';
 import CuteCard from '../components/CuteCard';
@@ -127,28 +128,46 @@ const SettingsScreen = ({ navigation }) => {
 
       {/* Premium Banner */}
       {!isPremium && (
-        <CuteCard
-          variant="pink"
-          onPress={handleUpgrade}
-          style={styles.premiumCard}
-        >
-          <Text style={styles.premiumEmoji}>🌟</Text>
-          <Text style={styles.premiumTitle}>{t('settings_premium_title')}</Text>
-          <Text style={styles.premiumDesc}>
-            {t('settings_premium_desc')}
-          </Text>
-          <View style={styles.premiumPrice}>
-            <Text style={styles.premiumPriceText}>{t('settings_premium_price')}</Text>
-          </View>
-        </CuteCard>
+        <TouchableOpacity onPress={handleUpgrade} activeOpacity={0.9} style={styles.premiumCardWrapper}>
+          <LinearGradient
+            colors={['#1a1a2e', '#16213e', '#0f3460']}
+            start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+            style={styles.premiumCard}
+          >
+            {/* Stars decoration */}
+            <Text style={styles.premiumStarTL}>✦</Text>
+            <Text style={styles.premiumStarTR}>✦</Text>
+            <Text style={styles.premiumStarBL}>✦</Text>
+            <View style={styles.premiumInner}>
+              <Text style={styles.premiumCrown}>👑</Text>
+              <Text style={styles.premiumTitle}>{t('settings_premium_title')}</Text>
+              <Text style={styles.premiumDesc}>{t('settings_premium_desc')}</Text>
+              <LinearGradient
+                colors={['#FFD700', '#FFA500', '#FFD700']}
+                start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+                style={styles.premiumPriceBadge}
+              >
+                <Text style={styles.premiumPriceText}>{t('settings_premium_price')}</Text>
+              </LinearGradient>
+            </View>
+          </LinearGradient>
+        </TouchableOpacity>
       )}
 
       {isPremium && (
-        <CuteCard variant="mint">
-          <Text style={{ textAlign: 'center', fontSize: FONTS.sizes.lg, fontWeight: '700', color: COLORS.text }}>
-            {t('settings_premium_active')}
-          </Text>
-        </CuteCard>
+        <LinearGradient
+          colors={['#1a1a2e', '#16213e', '#0f3460']}
+          start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+          style={styles.premiumActiveCard}
+        >
+          <Text style={styles.premiumActiveCrown}>👑</Text>
+          <Text style={styles.premiumActiveTitle}>{t('settings_premium_active')}</Text>
+          <View style={styles.premiumActiveStars}>
+            {['✦', '✦', '✦', '✦', '✦'].map((s, i) => (
+              <Text key={i} style={styles.premiumActiveStar}>{s}</Text>
+            ))}
+          </View>
+        </LinearGradient>
       )}
 
       {/* Caregivers */}
@@ -313,18 +332,47 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
   content: { padding: SPACING.lg },
   title: { fontSize: FONTS.sizes.title, fontWeight: '800', color: COLORS.text, marginTop: SPACING.sm, marginBottom: SPACING.lg },
-  premiumCard: { alignItems: 'center', paddingVertical: SPACING.xl },
-  premiumEmoji: { fontSize: 48, marginBottom: SPACING.sm },
-  premiumTitle: { fontSize: FONTS.sizes.xl, fontWeight: '800', color: COLORS.text, textAlign: 'center' },
-  premiumDesc: { fontSize: FONTS.sizes.md, color: COLORS.textLight, textAlign: 'center', marginTop: SPACING.xs },
-  premiumPrice: {
-    marginTop: SPACING.md,
-    backgroundColor: COLORS.primary,
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.sm,
+  premiumCardWrapper: { borderRadius: 20, marginBottom: SPACING.lg, overflow: 'hidden' },
+  premiumCard: {
+    borderRadius: 20,
+    padding: SPACING.xl,
+    overflow: 'hidden',
+    position: 'relative',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 16,
+    elevation: 12,
+  },
+  premiumInner: { alignItems: 'center' },
+  premiumCrown: { fontSize: 52, marginBottom: SPACING.sm },
+  premiumStarTL: { position: 'absolute', top: 12, left: 16, fontSize: 14, color: '#FFD700', opacity: 0.7 },
+  premiumStarTR: { position: 'absolute', top: 8, right: 20, fontSize: 20, color: '#FFD700', opacity: 0.5 },
+  premiumStarBL: { position: 'absolute', bottom: 12, left: 30, fontSize: 10, color: '#FFD700', opacity: 0.6 },
+  premiumTitle: { fontSize: FONTS.sizes.xl, fontWeight: '900', color: '#FFD700', textAlign: 'center', letterSpacing: 0.5 },
+  premiumDesc: { fontSize: FONTS.sizes.md, color: 'rgba(255,255,255,0.75)', textAlign: 'center', marginTop: SPACING.sm },
+  premiumPriceBadge: {
+    marginTop: SPACING.lg,
+    paddingHorizontal: SPACING.xl * 1.5,
+    paddingVertical: SPACING.sm + 2,
     borderRadius: RADIUS.full,
   },
-  premiumPriceText: { color: COLORS.white, fontWeight: '800', fontSize: FONTS.sizes.lg },
+  premiumPriceText: { color: '#1a1a2e', fontWeight: '900', fontSize: FONTS.sizes.lg, letterSpacing: 0.5 },
+  premiumActiveCard: {
+    borderRadius: 20,
+    padding: SPACING.xl,
+    alignItems: 'center',
+    marginBottom: SPACING.lg,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 10,
+  },
+  premiumActiveCrown: { fontSize: 40, marginBottom: SPACING.xs },
+  premiumActiveTitle: { fontSize: FONTS.sizes.lg, fontWeight: '800', color: '#FFD700', textAlign: 'center' },
+  premiumActiveStars: { flexDirection: 'row', marginTop: SPACING.sm, gap: 6 },
+  premiumActiveStar: { fontSize: 14, color: '#FFD700' },
   sectionTitle: {
     fontSize: FONTS.sizes.xl,
     fontWeight: '700',
