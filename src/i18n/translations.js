@@ -1446,4 +1446,55 @@ translations.ar.pf_p4 = 'تقرير PDF للزيارات البيطرية';
 translations.ar.pf_p5 = 'مشاركة مقدمي رعاية غير محدودة';
 translations.ar.pf_p6 = 'خالٍ تمامًا من الإعلانات';
 
+// ── Premium FOMO / urgency copy ────────────────────────────────────────────
+translations.en.premium_urgency      = '🔥 Limited Offer — Prices going up soon!';
+translations.en.premium_savings_hook = '💰 Pet owners save avg. $240/year on meds';
+translations.en.premium_trial        = '7-day free trial included';
+translations.en.premium_value1       = 'Track unlimited pets & medications';
+translations.en.premium_value2       = 'Never miss a dose — smart reminders';
+translations.en.premium_value3       = 'Find cheapest prices near you';
+translations.en.premium_value4       = 'Share care with family & vets';
+translations.en.premium_stars        = '★★★★★  4.9 · 2,000+ reviews';
+translations.en.price_google_fallback = 'Opening Google Search for {name}…';
+
+translations.tr.premium_urgency      = '🔥 Sınırlı Teklif — Fiyatlar yakında artıyor!';
+translations.tr.premium_savings_hook = '💰 Evcil hayvan sahipleri yıllık ortalama $240 tasarruf ediyor';
+translations.tr.premium_trial        = '7 günlük ücretsiz deneme dahil';
+translations.tr.premium_value1       = 'Sınırsız evcil hayvan ve ilaç takibi';
+translations.tr.premium_value2       = 'Hiçbir dozu kaçırma — akıllı hatırlatmalar';
+translations.tr.premium_value3       = 'Yakınındaki en ucuz fiyatları bul';
+translations.tr.premium_value4       = 'Aile ve veterinerlerle bakımı paylaş';
+translations.tr.premium_stars        = '★★★★★  4.9 · 2.000+ değerlendirme';
+translations.tr.price_google_fallback = '{name} için Google Arama açılıyor…';
+
+translations.de.premium_urgency      = '🔥 Begrenztes Angebot — Preise steigen bald!';
+translations.de.premium_savings_hook = '💰 Tierbesitzer sparen im Durchschnitt $240/Jahr für Medikamente';
+translations.de.premium_trial        = '7-tägige kostenlose Testversion inklusive';
+translations.de.premium_value1       = 'Unbegrenzte Haustiere & Medikamentenverfolgung';
+translations.de.premium_value2       = 'Keine Dosis verpassen — smarte Erinnerungen';
+translations.de.premium_value3       = 'Günstigste Preise in deiner Nähe finden';
+translations.de.premium_value4       = 'Pflege mit Familie & Tierärzten teilen';
+translations.de.premium_stars        = '★★★★★  4,9 · 2.000+ Bewertungen';
+translations.de.price_google_fallback = 'Google-Suche für {name} wird geöffnet…';
+
+translations.fr.premium_urgency      = '🔥 Offre limitée — Les prix augmentent bientôt!';
+translations.fr.premium_savings_hook = '💰 Les propriétaires économisent en moyenne 240$/an sur les médicaments';
+translations.fr.premium_trial        = 'Essai gratuit de 7 jours inclus';
+translations.fr.premium_value1       = 'Animaux et médicaments illimités';
+translations.fr.premium_value2       = 'Ne manquez jamais une dose — rappels intelligents';
+translations.fr.premium_value3       = 'Trouvez les meilleurs prix près de chez vous';
+translations.fr.premium_value4       = 'Partagez les soins avec la famille & les vétérinaires';
+translations.fr.premium_stars        = '★★★★★  4,9 · 2 000+ avis';
+translations.fr.price_google_fallback = 'Ouverture de Google Search pour {name}…';
+
+translations.ar.premium_urgency      = '🔥 عرض محدود — الأسعار سترتفع قريبًا!';
+translations.ar.premium_savings_hook = '💰 أصحاب الحيوانات الأليفة يوفرون $240 في المتوسط سنويًا';
+translations.ar.premium_trial        = 'تجربة مجانية لمدة 7 أيام';
+translations.ar.premium_value1       = 'تتبع حيوانات أليفة وأدوية غير محدودة';
+translations.ar.premium_value2       = 'لا تفوت أي جرعة — تذكيرات ذكية';
+translations.ar.premium_value3       = 'ابحث عن أرخص الأسعار بالقرب منك';
+translations.ar.premium_value4       = 'شارك الرعاية مع العائلة والأطباء البيطريين';
+translations.ar.premium_stars        = '★★★★★  4.9 · أكثر من 2,000 تقييم';
+translations.ar.price_google_fallback = 'فتح بحث Google لـ {name}…';
+
 export default translations;

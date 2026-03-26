@@ -154,6 +154,11 @@ const SettingsScreen = ({ navigation }) => {
             <View style={styles.blobTL} />
             <View style={styles.blobBR} />
 
+            {/* Urgency banner */}
+            <View style={styles.urgencyBanner}>
+              <Text style={styles.urgencyText}>{t('premium_urgency')}</Text>
+            </View>
+
             {/* Badge */}
             <View style={styles.mostPopularBadge}>
               <Text style={styles.mostPopularText}>{t('premium_most_popular')}</Text>
@@ -163,6 +168,31 @@ const SettingsScreen = ({ navigation }) => {
             <Text style={styles.premiumCrown}>👑</Text>
             <Text style={styles.premiumTitle}>{t('premium_title')}</Text>
             <Text style={styles.premiumTagline}>{t('premium_tagline')}</Text>
+
+            {/* Savings hook */}
+            <View style={styles.savingsHook}>
+              <Text style={styles.savingsHookText}>{t('premium_savings_hook')}</Text>
+            </View>
+
+            {/* Value propositions */}
+            <View style={styles.valueList}>
+              {[
+                t('premium_value1'),
+                t('premium_value2'),
+                t('premium_value3'),
+                t('premium_value4'),
+              ].map((val, i) => (
+                <View key={i} style={styles.valueRow}>
+                  <LinearGradient
+                    colors={['#FFD700', '#FFA500']}
+                    style={styles.valueCheckCircle}
+                  >
+                    <Text style={styles.valueCheck}>✓</Text>
+                  </LinearGradient>
+                  <Text style={styles.valueText}>{val}</Text>
+                </View>
+              ))}
+            </View>
 
             {/* Free vs Premium comparison */}
             <View style={styles.compareBox}>
@@ -243,6 +273,11 @@ const SettingsScreen = ({ navigation }) => {
               </TouchableOpacity>
             </View>
 
+            {/* Trial badge */}
+            <View style={styles.trialBadge}>
+              <Text style={styles.trialText}>🎁 {t('premium_trial')}</Text>
+            </View>
+
             {/* CTA Button */}
             <TouchableOpacity onPress={handleUpgrade} activeOpacity={0.85} style={styles.ctaWrapper}>
               <LinearGradient
@@ -252,9 +287,12 @@ const SettingsScreen = ({ navigation }) => {
                 style={styles.ctaButton}
               >
                 <Text style={styles.ctaText}>{t('premium_unlock')}</Text>
+                <Text style={styles.ctaSubText}>→</Text>
               </LinearGradient>
             </TouchableOpacity>
 
+            {/* Stars */}
+            <Text style={styles.premiumStars}>{t('premium_stars')}</Text>
             {/* Social proof */}
             <Text style={styles.socialProof}>{t('premium_proof')}</Text>
             <Text style={styles.cancelNote}>{t('premium_cancel')}</Text>
@@ -484,6 +522,73 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: 'rgba(255,215,0,0.1)',
   },
+  // Urgency banner
+  urgencyBanner: {
+    backgroundColor: 'rgba(255,107,107,0.2)',
+    borderRadius: RADIUS.lg,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.md,
+    marginBottom: SPACING.md,
+    borderWidth: 1,
+    borderColor: 'rgba(255,107,107,0.4)',
+    alignItems: 'center',
+  },
+  urgencyText: {
+    fontSize: FONTS.sizes.sm,
+    fontWeight: '700',
+    color: '#FF9999',
+    textAlign: 'center',
+  },
+  // Savings hook
+  savingsHook: {
+    backgroundColor: 'rgba(0,184,148,0.15)',
+    borderRadius: RADIUS.md,
+    padding: SPACING.sm,
+    marginBottom: SPACING.md,
+    borderWidth: 1,
+    borderColor: 'rgba(0,184,148,0.3)',
+    alignItems: 'center',
+  },
+  savingsHookText: {
+    fontSize: FONTS.sizes.sm,
+    fontWeight: '700',
+    color: '#00E5B0',
+    textAlign: 'center',
+  },
+  // Value propositions
+  valueList: { marginBottom: SPACING.md, gap: SPACING.sm },
+  valueRow: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm },
+  valueCheckCircle: {
+    width: 22, height: 22, borderRadius: 11,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  valueCheck: { fontSize: 12, fontWeight: '900', color: '#2D1B69' },
+  valueText: { flex: 1, fontSize: FONTS.sizes.sm, color: 'rgba(255,255,255,0.9)', fontWeight: '600' },
+  // Trial badge
+  trialBadge: {
+    backgroundColor: 'rgba(255,215,0,0.12)',
+    borderRadius: RADIUS.md,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.md,
+    marginBottom: SPACING.sm,
+    borderWidth: 1,
+    borderColor: 'rgba(255,215,0,0.3)',
+    alignItems: 'center',
+  },
+  trialText: { fontSize: FONTS.sizes.sm, fontWeight: '700', color: '#FFD700' },
+  // Stars
+  premiumStars: {
+    textAlign: 'center',
+    fontSize: FONTS.sizes.sm,
+    color: '#FFD700',
+    fontWeight: '700',
+    marginTop: SPACING.sm,
+    marginBottom: 2,
+    letterSpacing: 0.5,
+  },
+  // CTA sub text
+  ctaSubText: { fontSize: 20, color: '#2D1B69', fontWeight: '900', marginLeft: 4 },
+
   mostPopularBadge: {
     alignSelf: 'center',
     backgroundColor: '#FFD700',
@@ -627,6 +732,8 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.md + 2,
     borderRadius: RADIUS.full,
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   ctaText: {
     fontSize: FONTS.sizes.lg,

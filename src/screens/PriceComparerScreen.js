@@ -111,29 +111,38 @@ const PriceComparerScreen = ({ route }) => {
   }, [language]);
 
   const detectLocation = async () => {
-    // 1. Language → country first (most reliable in emulator)
     const LANG_TO_COUNTRY = { tr: 'TR', de: 'DE', fr: 'FR', ar: 'SA', en: 'US' };
     const langCountry = LANG_TO_COUNTRY[language] || 'US';
 
-    // 2. Try IP geolocation (works on real devices)
-    try {
-      const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), 4000);
-      const res = await fetch('https://ip-api.com/json/?fields=countryCode', { signal: ctrl.signal });
-      clearTimeout(timer);
-      if (res.ok) {
-        const data = await res.json();
-        const code = data?.countryCode?.toUpperCase();
-        if (code && LOCATION_CONFIG[code]) {
-          setSelectedCountry(code);
-          setDetectingLocation(false);
-          return;
+    // Try multiple IP geolocation services for reliability
+    const geoServices = [
+      'https://ip-api.com/json/?fields=countryCode',
+      'https://ipapi.co/json/',
+      'https://ipwho.is/',
+    ];
+
+    for (const svcUrl of geoServices) {
+      try {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 3500);
+        const res = await fetch(svcUrl, { signal: ctrl.signal });
+        clearTimeout(timer);
+        if (res.ok) {
+          const data = await res.json();
+          // different services use different field names
+          const code = (data?.countryCode || data?.country_code || data?.country)?.toUpperCase()?.slice(0, 2);
+          if (code && LOCATION_CONFIG[code]) {
+            setSelectedCountry(code);
+            setDetectingLocation(false);
+            return;
+          }
         }
+      } catch (_) {
+        // try next service
       }
-    } catch (_) {
-      // fallback to language-based
     }
 
+    // All IP services failed — fall back to app language
     setSelectedCountry(langCountry);
     setDetectingLocation(false);
   };
@@ -233,10 +242,28 @@ const PriceComparerScreen = ({ route }) => {
 
   // Opens the actual pharmacy website search directly
   const handleBuy = (pharmacy, medName) => {
-    const url = pharmacy.url + encodeURIComponent(medName);
-    Linking.canOpenURL(url)
-      .then(() => Linking.openURL(url))
-      .catch(() => Alert.alert(t('error'), t('price_open_error')));
+    const encoded = encodeURIComponent(medName.trim());
+    const url = pharmacy.url + encoded;
+    // Show confirmation then open — always use openURL directly (canOpenURL is unreliable for https on Android)
+    Alert.alert(
+      `${pharmacy.logo} ${pharmacy.name}`,
+      t('price_open_store_msg', { name: pharmacy.name, med: medName }),
+      [
+        { text: t('cancel'), style: 'cancel' },
+        {
+          text: `🌐 ${t('price_open_store')}`,
+          onPress: () => {
+            Linking.openURL(url).catch(() => {
+              // Fallback: Google search for the pharmacy + medication
+              const fallback = `https://www.google.com/search?q=${encodeURIComponent(pharmacy.name + ' ' + medName + ' buy online')}`;
+              Linking.openURL(fallback).catch(() =>
+                Alert.alert(t('error'), t('price_open_error'))
+              );
+            });
+          },
+        },
+      ]
+    );
   };
 
   const lowestPrice = results.length > 0 ? results[0].price : 0;
@@ -480,12 +507,15 @@ const PriceComparerScreen = ({ route }) => {
                       activeOpacity={0.82}
                     >
                       <LinearGradient
-                        colors={isCheapest ? ['#FF6B9D', '#C77DFF'] : ['#F0ECFF', '#E8E0FF']}
+                        colors={isCheapest ? ['#FF6B9D', '#C77DFF'] : ['#667EEA', '#764BA2']}
                         start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
                         style={styles.shopBtnGrad}
                       >
-                        <Text style={[styles.shopBtnText, !isCheapest && styles.shopBtnTextOutline]}>
+                        <Text style={styles.shopBtnText}>
                           🛒 {t('price_shop_now')} — {pharmacy.name}
+                        </Text>
+                        <Text style={styles.shopBtnUrl}>
+                          🌐 {pharmacy.url.replace(/^https?:\/\//, '').split('/')[0]}
                         </Text>
                       </LinearGradient>
                     </TouchableOpacity>
@@ -648,13 +678,15 @@ const styles = StyleSheet.create({
   badgeTextGray: { fontSize: FONTS.sizes.xs, color: COLORS.textLight, fontWeight: '600' },
 
   shopBtnGrad: {
-    borderRadius: RADIUS.full,
+    borderRadius: RADIUS.lg,
     paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.md,
     alignItems: 'center',
     marginTop: SPACING.xs,
   },
   shopBtnText: { fontSize: FONTS.sizes.md, fontWeight: '800', color: '#FFF' },
-  shopBtnTextOutline: { color: COLORS.primary },
+  shopBtnUrl: { fontSize: FONTS.sizes.xs, color: 'rgba(255,255,255,0.75)', marginTop: 2 },
+  shopBtnTextOutline: { color: '#FFF' },
 
   outOfStockBtn: {
     borderRadius: RADIUS.full,
