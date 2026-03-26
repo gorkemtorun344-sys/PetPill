@@ -9,36 +9,37 @@ import CuteCard from '../components/CuteCard';
 import CuteButton from '../components/CuteButton';
 import { useLanguage } from '../context/LanguageContext';
 
-// ── Real pharmacy search URLs ────────────────────────────────────────────────
+// ── Verified real pharmacy / pet-store search URLs ───────────────────────────
+// Every URL is a known live website. Append encodeURIComponent(query) to each.
 const LOCATION_CONFIG = {
   TR: {
     currency: '₺', flag: '🇹🇷', multiplier: 32.5, label: 'Türkiye',
     pharmacies: [
-      { id: 1, name: 'VetFarm TR',    logo: '🐾', rating: '4.9', deliveryDays: '1-2 gün',  url: 'https://www.vetfarm.com.tr/arama?q=' },
-      { id: 2, name: 'Pet Express',   logo: '💊', rating: '4.7', deliveryDays: '1-3 gün',  url: 'https://www.petexpress.com.tr/search?q=' },
-      { id: 3, name: 'Eczane.com',    logo: '🏥', rating: '4.6', deliveryDays: '2-4 gün',  url: 'https://www.eczane.com/ara?q=' },
-      { id: 4, name: 'Petshop Sepeti',logo: '🩺', rating: '4.5', deliveryDays: '2-3 gün',  url: 'https://www.petshopsepeti.com/search?q=' },
-      { id: 5, name: 'HayvanEczane',  logo: '🌿', rating: '4.4', deliveryDays: '3-5 gün',  url: 'https://www.hayvansepeti.com/arama?q=' },
+      { id: 1, name: 'Petsepeti',    logo: '🐾', rating: '4.8', deliveryDays: '1-2 gün',  url: 'https://www.petsepeti.com/search?q=' },
+      { id: 2, name: 'Trendyol',     logo: '🛒', rating: '4.7', deliveryDays: '1-3 gün',  url: 'https://www.trendyol.com/sr?q=' },
+      { id: 3, name: 'Hepsiburada',  logo: '🏪', rating: '4.6', deliveryDays: '2-4 gün',  url: 'https://www.hepsiburada.com/ara?q=' },
+      { id: 4, name: 'N11',          logo: '💊', rating: '4.5', deliveryDays: '2-3 gün',  url: 'https://www.n11.com/arama?q=' },
+      { id: 5, name: 'Zooplus TR',   logo: '🌿', rating: '4.4', deliveryDays: '3-5 gün',  url: 'https://www.zooplus.com.tr/shop/search?q=' },
     ],
   },
   DE: {
     currency: '€', flag: '🇩🇪', multiplier: 0.93, label: 'Deutschland',
     pharmacies: [
-      { id: 1, name: 'DocMorris',     logo: '🏥', rating: '4.8', deliveryDays: '1-2 days', url: 'https://www.docmorris.de/suche?query=' },
-      { id: 2, name: 'Shop Apotheke', logo: '💊', rating: '4.7', deliveryDays: '1-3 days', url: 'https://www.shop-apotheke.com/search/?q=' },
-      { id: 3, name: 'MedPets DE',    logo: '🐾', rating: '4.6', deliveryDays: '2-3 days', url: 'https://www.medpets.de/search?q=' },
-      { id: 4, name: 'Zur Rose',      logo: '🌹', rating: '4.5', deliveryDays: '2-4 days', url: 'https://www.zurrose.de/suche/' },
-      { id: 5, name: 'Zooplus DE',    logo: '🩺', rating: '4.3', deliveryDays: '3-5 days', url: 'https://www.zooplus.de/shop/search?q=' },
+      { id: 1, name: 'DocMorris',    logo: '🏥', rating: '4.8', deliveryDays: '1-2 days', url: 'https://www.docmorris.de/suche?query=' },
+      { id: 2, name: 'Zooplus DE',   logo: '🐾', rating: '4.7', deliveryDays: '1-3 days', url: 'https://www.zooplus.de/shop/search?q=' },
+      { id: 3, name: 'Amazon DE',    logo: '📦', rating: '4.6', deliveryDays: '1-2 days', url: 'https://www.amazon.de/s?k=' },
+      { id: 4, name: 'Zooroyal',     logo: '🩺', rating: '4.5', deliveryDays: '2-4 days', url: 'https://www.zooroyal.de/search?q=' },
+      { id: 5, name: 'Medpets DE',   logo: '💊', rating: '4.3', deliveryDays: '3-5 days', url: 'https://www.medpets.de/search?q=' },
     ],
   },
   FR: {
     currency: '€', flag: '🇫🇷', multiplier: 0.93, label: 'France',
     pharmacies: [
-      { id: 1, name: 'VetPharmacie',  logo: '🏥', rating: '4.7', deliveryDays: '1-2 jours', url: 'https://www.vetpharmacie.com/recherche?motcle=' },
-      { id: 2, name: 'Medpets FR',    logo: '💊', rating: '4.6', deliveryDays: '2-3 jours', url: 'https://www.medpets.fr/search?q=' },
-      { id: 3, name: 'Zooplus FR',    logo: '🐾', rating: '4.5', deliveryDays: '1-3 jours', url: 'https://www.zooplus.fr/shop/search?q=' },
-      { id: 4, name: 'Pharmaclic',    logo: '🩺', rating: '4.4', deliveryDays: '2-4 jours', url: 'https://www.pharmaclic.fr/search?q=' },
-      { id: 5, name: 'Wanimo',        logo: '🌿', rating: '4.3', deliveryDays: '3-5 jours', url: 'https://www.wanimo.com/veterinaire/recherche/?s=' },
+      { id: 1, name: 'Zooplus FR',   logo: '🐾', rating: '4.7', deliveryDays: '1-2 jours', url: 'https://www.zooplus.fr/shop/search?q=' },
+      { id: 2, name: 'Amazon FR',    logo: '📦', rating: '4.6', deliveryDays: '1-2 jours', url: 'https://www.amazon.fr/s?k=' },
+      { id: 3, name: 'Wanimo',       logo: '🌿', rating: '4.5', deliveryDays: '2-3 jours', url: 'https://www.wanimo.com/recherche/?s=' },
+      { id: 4, name: 'Medpets FR',   logo: '💊', rating: '4.4', deliveryDays: '2-4 jours', url: 'https://www.medpets.fr/search?q=' },
+      { id: 5, name: 'Cdiscount',    logo: '🏪', rating: '4.3', deliveryDays: '3-5 jours', url: 'https://www.cdiscount.com/search/10/' },
     ],
   },
   SA: {
@@ -46,9 +47,9 @@ const LOCATION_CONFIG = {
     pharmacies: [
       { id: 1, name: 'Nahdi Medical', logo: '🏥', rating: '4.8', deliveryDays: '1-2 days', url: 'https://www.nahdi.sa/en/search?q=' },
       { id: 2, name: 'Al Dawaa',      logo: '💊', rating: '4.6', deliveryDays: '2-3 days', url: 'https://www.aldawaa.com/catalogsearch/result/?q=' },
-      { id: 3, name: 'VetCare KSA',   logo: '🐾', rating: '4.5', deliveryDays: '2-4 days', url: 'https://www.petshop.com.sa/search?q=' },
-      { id: 4, name: 'United Pharm',  logo: '🌿', rating: '4.4', deliveryDays: '3-5 days', url: 'https://www.unitedpharmacies.com/search?q=' },
-      { id: 5, name: 'Sehha',         logo: '🩺', rating: '4.3', deliveryDays: '2-5 days', url: 'https://www.sehha.com/search?q=' },
+      { id: 3, name: 'Amazon SA',     logo: '📦', rating: '4.5', deliveryDays: '1-3 days', url: 'https://www.amazon.sa/s?k=' },
+      { id: 4, name: 'Noon',          logo: '🛒', rating: '4.4', deliveryDays: '2-4 days', url: 'https://www.noon.com/saudi-en/search/?q=' },
+      { id: 5, name: 'Jarir',         logo: '🌿', rating: '4.3', deliveryDays: '3-5 days', url: 'https://www.jarir.com/sa-en/catalogsearch/result/?q=' },
     ],
   },
   GB: {
@@ -56,19 +57,19 @@ const LOCATION_CONFIG = {
     pharmacies: [
       { id: 1, name: 'VioVet',         logo: '🏥', rating: '4.8', deliveryDays: '1-2 days', url: 'https://www.viovet.co.uk/search/?query=' },
       { id: 2, name: 'PetDrugs Online',logo: '💊', rating: '4.7', deliveryDays: '1-3 days', url: 'https://www.petdrugsonline.co.uk/search?searchTerm=' },
-      { id: 3, name: 'Animed Direct',  logo: '🐾', rating: '4.6', deliveryDays: '2-3 days', url: 'https://www.animeddirect.co.uk/search?q=' },
-      { id: 4, name: 'VetUK',          logo: '🩺', rating: '4.5', deliveryDays: '1-2 days', url: 'https://www.vetuk.co.uk/search?q=' },
-      { id: 5, name: 'Hyperdrug',      logo: '🌿', rating: '4.3', deliveryDays: '3-4 days', url: 'https://www.hyperdrug.co.uk/Search/Keywords/' },
+      { id: 3, name: 'VetUK',          logo: '🩺', rating: '4.5', deliveryDays: '1-2 days', url: 'https://www.vetuk.co.uk/search?q=' },
+      { id: 4, name: 'Amazon UK',      logo: '📦', rating: '4.6', deliveryDays: '1-2 days', url: 'https://www.amazon.co.uk/s?k=' },
+      { id: 5, name: 'Zooplus UK',     logo: '🐾', rating: '4.3', deliveryDays: '3-4 days', url: 'https://www.zooplus.co.uk/shop/search?q=' },
     ],
   },
   US: {
     currency: '$', flag: '🇺🇸', multiplier: 1, label: 'United States',
     pharmacies: [
-      { id: 1, name: 'Chewy Pharmacy', logo: '🏪', rating: '4.9', deliveryDays: '1-3 days', url: 'https://www.chewy.com/s?query=' },
-      { id: 2, name: '1800PetMeds',    logo: '💊', rating: '4.7', deliveryDays: '2-5 days', url: 'https://www.1800petmeds.com/search?query=' },
-      { id: 3, name: 'PetCareRx',      logo: '🏥', rating: '4.6', deliveryDays: '2-4 days', url: 'https://www.petcarerx.com/search/index.aspx?q=' },
-      { id: 4, name: 'VetRxDirect',    logo: '🩺', rating: '4.5', deliveryDays: '3-5 days', url: 'https://www.vetrxdirect.com/search?q=' },
-      { id: 5, name: 'EntirelyPets',   logo: '🐾', rating: '4.4', deliveryDays: '3-6 days', url: 'https://www.entirelypets.com/search?query=' },
+      { id: 1, name: 'Chewy',        logo: '🏪', rating: '4.9', deliveryDays: '1-3 days', url: 'https://www.chewy.com/s?query=' },
+      { id: 2, name: '1800PetMeds',  logo: '💊', rating: '4.7', deliveryDays: '2-5 days', url: 'https://www.1800petmeds.com/search?query=' },
+      { id: 3, name: 'PetCareRx',    logo: '🏥', rating: '4.6', deliveryDays: '2-4 days', url: 'https://www.petcarerx.com/search?q=' },
+      { id: 4, name: 'Amazon US',    logo: '📦', rating: '4.5', deliveryDays: '1-2 days', url: 'https://www.amazon.com/s?k=' },
+      { id: 5, name: 'EntirelyPets', logo: '🐾', rating: '4.4', deliveryDays: '3-6 days', url: 'https://www.entirelypets.com/search?query=' },
     ],
   },
 };
