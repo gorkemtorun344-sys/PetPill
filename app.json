@@ -50,7 +50,10 @@
     "extra": {
       "eas": {
         "projectId": "7d277d41-184c-4e4c-b8e0-c666c9c3589f"
-      }
+      },
+      "privacyPolicyUrl": "https://gorkemtorun344-sys.github.io/PetPill/privacy-policy.html",
+      "termsUrl": "https://gorkemtorun344-sys.github.io/PetPill/terms.html",
+      "supportEmail": "support@petpill.app"
     }
   }
 }

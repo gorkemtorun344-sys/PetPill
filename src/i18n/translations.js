@@ -1043,7 +1043,206 @@ const translations = {
     lang_subtitle: 'اختر لغتك المفضلة',
     lang_saved: '!تم تحديث اللغة',
     lang_saved_msg: 'تم تغيير لغة التطبيق.',
+    // Privacy & Terms
+    privacy_title: 'سياسة الخصوصية',
+    privacy_updated: 'آخر تحديث: مارس 2026',
+    privacy_h1: '1. مقدمة',
+    privacy_b1: 'تلتزم PetPill (PP) بحماية خصوصيتك. تشرح هذه السياسة كيف نتعامل مع بياناتك.',
+    privacy_h2: '2. البيانات التي نجمعها',
+    privacy_b2: 'يخزن PP جميع البيانات محلياً على جهازك فقط. لا نجمع أو ننقل أي بيانات شخصية إلى خوادم خارجية. تشمل البيانات:\n\n• ملفات الحيوانات الأليفة\n• جداول الأدوية والجرعات\n• سجلات التطعيم والصحة\n• تفاصيل مواعيد البيطري\n• معلومات الاتصال بمقدمي الرعاية\n• صور الحيوانات (محلياً فقط)',
+    privacy_h3: '3. أذونات الجهاز',
+    privacy_b3: 'قد يطلب PP الأذونات التالية:\n\n• الكاميرا والمكتبة: لالتقاط صور حيواناتك. تُخزن محلياً ولا تُرفع.\n• الموقع: للبحث عن عيادات بيطرية قريبة. لا يُخزن أو يُنقل.\n• الإشعارات: لتذكيرات الأدوية والمواعيد. تُجدول محلياً.',
+    privacy_h4: '4. تخزين البيانات والأمان',
+    privacy_b4: 'تُخزن جميع بياناتك محلياً على جهازك. إذا أزلت التطبيق، ستُحذف البيانات نهائياً.',
+    privacy_h5: '5. خدمات الطرف الثالث',
+    privacy_b5: 'لا يشارك PP بياناتك مع أي طرف ثالث. التطبيق يعمل بالكامل دون اتصال بالإنترنت.',
+    privacy_h6: '6. خصوصية الأطفال',
+    privacy_b6: 'لا يجمع PP معلومات شخصية عن الأطفال دون 13 عاماً.',
+    privacy_h7: '7. التغييرات على هذه السياسة',
+    privacy_b7: 'قد نحدّث هذه السياسة من وقت لآخر. ستنعكس أي تغييرات في التطبيق.',
+    privacy_h8: '8. تواصل معنا',
+    privacy_b8: 'إذا كان لديك أسئلة، تواصل معنا على:\n\nsupport@petpill.app',
+    terms_title: 'شروط الخدمة',
+    terms_updated: 'آخر تحديث: مارس 2026',
+    terms_h1: '1. قبول الشروط',
+    terms_b1: 'بتنزيل أو استخدام PP، فإنك توافق على هذه الشروط.',
+    terms_h2: '2. وصف الخدمة',
+    terms_b2: 'PP هو تطبيق لمساعدة أصحاب الحيوانات على إدارة جداول الأدوية والسجلات الصحية.',
+    terms_h3: '3. إخلاء المسؤولية الطبية',
+    terms_b3: 'PP أداة للتتبع والتذكير فقط. لا يقدم نصائح طبية بيطرية. استشر طبيباً بيطرياً مؤهلاً دائماً.',
+    terms_h4: '4. مسؤوليات المستخدم',
+    terms_b4: 'أنت مسؤول عن:\n\n• دقة المعلومات التي تدخلها\n• اتباع تعليمات البيطري للأدوية\n• التحقق من الجرعات مع بيطريك',
+    terms_h5: '5. البيانات والخصوصية',
+    terms_b5: 'تُخزن جميع البيانات محلياً. لا نجمع بياناتك أو نصل إليها. راجع سياسة الخصوصية.',
+    terms_h6: '6. الميزات المميزة',
+    terms_b6: 'قد يقدم PP ميزات مميزة عبر المشتريات داخل التطبيق. تُدار الاشتراكات من خلال Google Play.',
+    terms_h7: '7. حدود المسؤولية',
+    terms_b7: 'يُقدَّم PP "كما هو" دون ضمانات. لسنا مسؤولين عن أي أضرار ناجمة عن استخدام التطبيق.',
+    terms_h8: '8. التغييرات على الشروط',
+    terms_b8: 'نحتفظ بالحق في تعديل هذه الشروط. الاستمرار في استخدام التطبيق يعني قبولك للشروط الجديدة.',
+    terms_h9: '9. تواصل',
+    terms_b9: 'للأسئلة حول هذه الشروط:\n\nsupport@petpill.app',
   },
 };
+
+// Privacy & Terms translations added to each language inline below
+translations.en.privacy_title = 'Privacy Policy';
+translations.en.privacy_updated = 'Last updated: March 2026';
+translations.en.privacy_h1 = '1. Introduction';
+translations.en.privacy_b1 = 'PetPill (PP) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information.';
+translations.en.privacy_h2 = '2. Information We Collect';
+translations.en.privacy_b2 = 'PP stores all data locally on your device only. We do NOT collect, transmit, or store any personal data externally. This includes:\n\n• Pet profiles (name, species, breed, weight)\n• Medication schedules and dosage information\n• Vaccination and health records\n• Vet appointment details\n• Caregiver contact information\n• Pet photos (stored locally only)';
+translations.en.privacy_h3 = '3. Device Permissions';
+translations.en.privacy_b3 = 'PP may request:\n\n• Camera & Photos: To take or select pet photos. Never uploaded.\n• Location: To find nearby vet clinics. Never stored or transmitted.\n• Notifications: For medication and appointment reminders. Scheduled locally.';
+translations.en.privacy_h4 = '4. Data Storage & Security';
+translations.en.privacy_b4 = 'All data is stored locally on your device. We have no access to your data. Uninstalling the app permanently deletes all data.';
+translations.en.privacy_h5 = '5. Third-Party Services';
+translations.en.privacy_b5 = 'PP does not share your data with any third parties. No analytics, advertising, or tracking. The app functions entirely offline.';
+translations.en.privacy_h6 = '6. Children\'s Privacy';
+translations.en.privacy_b6 = 'PP does not knowingly collect information from children under 13.';
+translations.en.privacy_h7 = '7. Changes to This Policy';
+translations.en.privacy_b7 = 'We may update this Privacy Policy from time to time. Any changes will be reflected in the app.';
+translations.en.privacy_h8 = '8. Contact Us';
+translations.en.privacy_b8 = 'For questions about this Privacy Policy:\n\nsupport@petpill.app';
+translations.en.terms_title = 'Terms of Service';
+translations.en.terms_updated = 'Last updated: March 2026';
+translations.en.terms_h1 = '1. Acceptance of Terms';
+translations.en.terms_b1 = 'By downloading or using PP, you agree to these Terms of Service.';
+translations.en.terms_h2 = '2. Description of Service';
+translations.en.terms_b2 = 'PP is a mobile app to help pet owners manage medication schedules, health records, and vet appointments.';
+translations.en.terms_h3 = '3. Medical Disclaimer';
+translations.en.terms_b3 = 'PP is a tracking and reminder tool only. It does NOT provide veterinary medical advice. Always consult a qualified veterinarian.';
+translations.en.terms_h4 = '4. User Responsibilities';
+translations.en.terms_b4 = 'You are responsible for:\n\n• Accuracy of information entered\n• Following your vet\'s medication instructions\n• Verifying dosages with your vet';
+translations.en.terms_h5 = '5. Data & Privacy';
+translations.en.terms_b5 = 'All data is stored locally. We do not collect or access your data. See our Privacy Policy for details.';
+translations.en.terms_h6 = '6. Premium Features';
+translations.en.terms_b6 = 'PP may offer premium features via in-app purchases managed through Google Play or the App Store.';
+translations.en.terms_h7 = '7. Limitation of Liability';
+translations.en.terms_b7 = 'PP is provided "as is" without warranties. We are not liable for damages arising from use of this app.';
+translations.en.terms_h8 = '8. Changes to Terms';
+translations.en.terms_b8 = 'We may modify these terms at any time. Continued use constitutes acceptance of new terms.';
+translations.en.terms_h9 = '9. Contact';
+translations.en.terms_b9 = 'For questions about these Terms:\n\nsupport@petpill.app';
+
+// Turkish
+translations.tr.privacy_title = 'Gizlilik Politikası';
+translations.tr.privacy_updated = 'Son güncelleme: Mart 2026';
+translations.tr.privacy_h1 = '1. Giriş';
+translations.tr.privacy_b1 = 'PetPill (PP) gizliliğinizi korumaya kararlıdır. Bu politika bilgilerinizi nasıl işlediğimizi açıklar.';
+translations.tr.privacy_h2 = '2. Topladığımız Bilgiler';
+translations.tr.privacy_b2 = 'PP tüm verileri yalnızca cihazınızda yerel olarak saklar. Hiçbir kişisel veri dışarıya gönderilmez:\n\n• Evcil hayvan profilleri\n• İlaç takvimleri ve dozaj bilgileri\n• Aşı ve sağlık kayıtları\n• Veteriner randevu detayları\n• Bakıcı iletişim bilgileri\n• Evcil hayvan fotoğrafları (yalnızca yerel)';
+translations.tr.privacy_h3 = '3. Cihaz İzinleri';
+translations.tr.privacy_b3 = 'PP şu izinleri isteyebilir:\n\n• Kamera ve Fotoğraf: Evcil hayvan fotoğrafları için. Hiçbiri yüklenmez.\n• Konum: Yakın veteriner klinikleri bulmak için. Saklanmaz.\n• Bildirimler: İlaç ve randevu hatırlatmaları için. Yerel olarak zamanlanır.';
+translations.tr.privacy_h4 = '4. Veri Depolama ve Güvenlik';
+translations.tr.privacy_b4 = 'Tüm veriler cihazınızda yerel olarak saklanır. Verilerinize erişimimiz yoktur. Uygulamayı kaldırırsanız veriler kalıcı olarak silinir.';
+translations.tr.privacy_h5 = '5. Üçüncü Taraf Hizmetler';
+translations.tr.privacy_b5 = 'PP verilerinizi üçüncü taraflarla paylaşmaz. Analitik, reklam veya takip hizmeti kullanılmaz.';
+translations.tr.privacy_h6 = '6. Çocukların Gizliliği';
+translations.tr.privacy_b6 = 'PP, 13 yaş altı çocuklardan bilerek bilgi toplamaz.';
+translations.tr.privacy_h7 = '7. Bu Politikadaki Değişiklikler';
+translations.tr.privacy_b7 = 'Bu politikayı zaman zaman güncelleyebiliriz. Değişiklikler uygulamada yansıtılacaktır.';
+translations.tr.privacy_h8 = '8. Bize Ulaşın';
+translations.tr.privacy_b8 = 'Bu politika hakkında sorularınız için:\n\nsupport@petpill.app';
+translations.tr.terms_title = 'Kullanım Koşulları';
+translations.tr.terms_updated = 'Son güncelleme: Mart 2026';
+translations.tr.terms_h1 = '1. Koşulların Kabulü';
+translations.tr.terms_b1 = "PP'yi indirerek veya kullanarak bu Kullanım Koşullarını kabul etmiş olursunuz.";
+translations.tr.terms_h2 = '2. Hizmet Açıklaması';
+translations.tr.terms_b2 = 'PP, evcil hayvan sahiplerinin ilaç takvimlerini, sağlık kayıtlarını ve veteriner randevularını yönetmesine yardımcı olan bir mobil uygulamadır.';
+translations.tr.terms_h3 = '3. Tıbbi Sorumluluk Reddi';
+translations.tr.terms_b3 = "PP yalnızca bir takip ve hatırlatma aracıdır. Veteriner tıbbi tavsiyesi sağlamaz. Her zaman nitelikli bir veterinere danışın.";
+translations.tr.terms_h4 = '4. Kullanıcı Sorumlulukları';
+translations.tr.terms_b4 = 'Şunlardan siz sorumlusunuz:\n\n• Girdiğiniz bilgilerin doğruluğu\n• Veterinerinizin ilaç talimatlarını takip etmek\n• Dozları veterinerinizle doğrulamak';
+translations.tr.terms_h5 = '5. Veri ve Gizlilik';
+translations.tr.terms_b5 = 'Tüm veriler yerel olarak saklanır. Verilerinizi toplamıyor veya erişmiyoruz. Gizlilik Politikamıza bakın.';
+translations.tr.terms_h6 = '6. Premium Özellikler';
+translations.tr.terms_b6 = "PP, Google Play üzerinden uygulama içi satın alımlar yoluyla premium özellikler sunabilir.";
+translations.tr.terms_h7 = '7. Sorumluluk Sınırlaması';
+translations.tr.terms_b7 = "PP 'olduğu gibi' sunulmaktadır. Uygulamanın kullanımından kaynaklanan zararlardan sorumlu değiliz.";
+translations.tr.terms_h8 = '8. Koşullardaki Değişiklikler';
+translations.tr.terms_b8 = 'Bu koşulları istediğimiz zaman değiştirebiliriz. Kullanmaya devam etmek yeni koşulları kabul ettiğiniz anlamına gelir.';
+translations.tr.terms_h9 = '9. İletişim';
+translations.tr.terms_b9 = 'Bu Kullanım Koşulları hakkında sorularınız için:\n\nsupport@petpill.app';
+
+// German
+translations.de.privacy_title = 'Datenschutzrichtlinie';
+translations.de.privacy_updated = 'Zuletzt aktualisiert: März 2026';
+translations.de.privacy_h1 = '1. Einleitung';
+translations.de.privacy_b1 = 'PetPill (PP) ist dem Schutz Ihrer Privatsphäre verpflichtet. Diese Richtlinie erklärt, wie wir mit Ihren Daten umgehen.';
+translations.de.privacy_h2 = '2. Erfasste Informationen';
+translations.de.privacy_b2 = 'PP speichert alle Daten nur lokal auf Ihrem Gerät. Keine persönlichen Daten werden extern übertragen:\n\n• Tierprofile\n• Medikamentenpläne und Dosierungen\n• Impf- und Gesundheitsdaten\n• Tierarzttermine\n• Betreuerkontakte\n• Tierfotos (nur lokal)';
+translations.de.privacy_h3 = '3. Gerätezugriffsrechte';
+translations.de.privacy_b3 = 'PP kann folgende Berechtigungen anfordern:\n\n• Kamera & Fotos: Für Tierfotos. Werden nie hochgeladen.\n• Standort: Zum Finden nahegelegener Tierkliniken. Nie gespeichert.\n• Benachrichtigungen: Für Erinnerungen. Lokal geplant.';
+translations.de.privacy_h4 = '4. Datenspeicherung & Sicherheit';
+translations.de.privacy_b4 = 'Alle Daten werden lokal gespeichert. Wir haben keinen Zugriff. Deinstallation löscht alle Daten dauerhaft.';
+translations.de.privacy_h5 = '5. Drittanbieterdienste';
+translations.de.privacy_b5 = 'PP teilt Ihre Daten nicht. Keine Analysen, Werbung oder Tracking.';
+translations.de.privacy_h6 = '6. Datenschutz für Kinder';
+translations.de.privacy_b6 = 'PP sammelt wissentlich keine Daten von Kindern unter 13 Jahren.';
+translations.de.privacy_h7 = '7. Änderungen dieser Richtlinie';
+translations.de.privacy_b7 = 'Wir können diese Richtlinie aktualisieren. Änderungen werden in der App angezeigt.';
+translations.de.privacy_h8 = '8. Kontakt';
+translations.de.privacy_b8 = 'Fragen zu dieser Richtlinie:\n\nsupport@petpill.app';
+translations.de.terms_title = 'Nutzungsbedingungen';
+translations.de.terms_updated = 'Zuletzt aktualisiert: März 2026';
+translations.de.terms_h1 = '1. Annahme der Bedingungen';
+translations.de.terms_b1 = 'Durch das Herunterladen oder Verwenden von PP stimmen Sie diesen Bedingungen zu.';
+translations.de.terms_h2 = '2. Dienstbeschreibung';
+translations.de.terms_b2 = 'PP ist eine App zur Verwaltung von Medikamentenplänen, Gesundheitsdaten und Tierarztterminen.';
+translations.de.terms_h3 = '3. Medizinischer Haftungsausschluss';
+translations.de.terms_b3 = 'PP ist nur ein Tracking- und Erinnerungstool. Es bietet keine tierärztlichen Ratschläge. Konsultieren Sie immer einen Tierarzt.';
+translations.de.terms_h4 = '4. Nutzerpflichten';
+translations.de.terms_b4 = 'Sie sind verantwortlich für:\n\n• Richtigkeit der eingegebenen Daten\n• Befolgen der Medikamentenanweisungen\n• Überprüfung der Dosierungen';
+translations.de.terms_h5 = '5. Daten & Datenschutz';
+translations.de.terms_b5 = 'Alle Daten lokal gespeichert. Wir sammeln keine Daten. Siehe Datenschutzrichtlinie.';
+translations.de.terms_h6 = '6. Premium-Funktionen';
+translations.de.terms_b6 = 'PP kann Premium-Funktionen über In-App-Käufe via Google Play anbieten.';
+translations.de.terms_h7 = '7. Haftungsbeschränkung';
+translations.de.terms_b7 = 'PP wird "wie besehen" angeboten. Wir haften nicht für Schäden aus der App-Nutzung.';
+translations.de.terms_h8 = '8. Änderungen der Bedingungen';
+translations.de.terms_b8 = 'Wir können diese Bedingungen jederzeit ändern. Weitere Nutzung bedeutet Zustimmung.';
+translations.de.terms_h9 = '9. Kontakt';
+translations.de.terms_b9 = 'Fragen zu diesen Bedingungen:\n\nsupport@petpill.app';
+
+// French
+translations.fr.privacy_title = 'Politique de confidentialité';
+translations.fr.privacy_updated = 'Dernière mise à jour: mars 2026';
+translations.fr.privacy_h1 = '1. Introduction';
+translations.fr.privacy_b1 = 'PetPill (PP) est engagé à protéger votre vie privée. Cette politique explique comment nous gérons vos données.';
+translations.fr.privacy_h2 = '2. Informations collectées';
+translations.fr.privacy_b2 = 'PP stocke toutes les données localement sur votre appareil. Aucune donnée personnelle n\'est transmise:\n\n• Profils des animaux\n• Calendriers médicamenteux\n• Dossiers de santé et vaccinations\n• Rendez-vous vétérinaires\n• Contacts des aidants\n• Photos (stockées localement)';
+translations.fr.privacy_h3 = '3. Autorisations de l\'appareil';
+translations.fr.privacy_b3 = 'PP peut demander:\n\n• Caméra & Photos: Pour les photos d\'animaux. Jamais téléchargées.\n• Localisation: Pour trouver des vétérinaires. Jamais stockée.\n• Notifications: Pour les rappels. Planifiées localement.';
+translations.fr.privacy_h4 = '4. Stockage et sécurité';
+translations.fr.privacy_b4 = 'Toutes les données sont stockées localement. Nous n\'y avons pas accès. La désinstallation supprime définitivement toutes les données.';
+translations.fr.privacy_h5 = '5. Services tiers';
+translations.fr.privacy_b5 = 'PP ne partage pas vos données. Pas d\'analyse, publicité ou suivi.';
+translations.fr.privacy_h6 = '6. Confidentialité des enfants';
+translations.fr.privacy_b6 = 'PP ne collecte pas sciemment des données d\'enfants de moins de 13 ans.';
+translations.fr.privacy_h7 = '7. Modifications';
+translations.fr.privacy_b7 = 'Nous pouvons mettre à jour cette politique. Les changements seront reflétés dans l\'app.';
+translations.fr.privacy_h8 = '8. Nous contacter';
+translations.fr.privacy_b8 = 'Questions sur cette politique:\n\nsupport@petpill.app';
+translations.fr.terms_title = 'Conditions d\'utilisation';
+translations.fr.terms_updated = 'Dernière mise à jour: mars 2026';
+translations.fr.terms_h1 = '1. Acceptation des conditions';
+translations.fr.terms_b1 = 'En téléchargeant ou utilisant PP, vous acceptez ces conditions.';
+translations.fr.terms_h2 = '2. Description du service';
+translations.fr.terms_b2 = 'PP est une app pour gérer les médicaments, dossiers de santé et rendez-vous vétérinaires.';
+translations.fr.terms_h3 = '3. Avertissement médical';
+translations.fr.terms_b3 = 'PP est un outil de suivi uniquement. Il ne fournit pas de conseils vétérinaires. Consultez toujours un vétérinaire qualifié.';
+translations.fr.terms_h4 = '4. Responsabilités';
+translations.fr.terms_b4 = 'Vous êtes responsable de:\n\n• L\'exactitude des informations saisies\n• Suivre les instructions de votre vétérinaire\n• Vérifier les dosages';
+translations.fr.terms_h5 = '5. Données & confidentialité';
+translations.fr.terms_b5 = 'Données stockées localement. Nous n\'y avons pas accès. Voir notre politique de confidentialité.';
+translations.fr.terms_h6 = '6. Fonctionnalités premium';
+translations.fr.terms_b6 = 'PP peut offrir des fonctionnalités premium via achats intégrés sur Google Play.';
+translations.fr.terms_h7 = '7. Limitation de responsabilité';
+translations.fr.terms_b7 = 'PP est fourni "tel quel". Nous ne sommes pas responsables des dommages résultant de l\'utilisation.';
+translations.fr.terms_h8 = '8. Modifications';
+translations.fr.terms_b8 = 'Nous pouvons modifier ces conditions à tout moment. L\'utilisation continue vaut acceptation.';
+translations.fr.terms_h9 = '9. Contact';
+translations.fr.terms_b9 = 'Questions sur ces conditions:\n\nsupport@petpill.app';
 
 export default translations;

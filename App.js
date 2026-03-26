@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { LinearGradient } from 'expo-linear-gradient';
 import { AppProvider } from './src/context/AppContext';
 import { LanguageProvider } from './src/context/LanguageContext';
 import AppNavigator from './src/navigation/AppNavigator';
@@ -14,9 +15,17 @@ import { COLORS, FONTS } from './src/constants/theme';
 
 const LoadingScreen = () => (
   <View style={styles.loadingContainer}>
-    <Text style={styles.loadingEmoji}>💊🐾</Text>
+    {/* PP Logo Badge */}
+    <LinearGradient
+      colors={['#FF6B9D', '#FF8E53', '#FF6B9D']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.logoBadge}
+    >
+      <Text style={styles.logoText}>PP</Text>
+    </LinearGradient>
     <Text style={styles.loadingTitle}>PetPill</Text>
-    <Text style={styles.loadingSubtitle}>Caring for your pets, one pill at a time</Text>
+    <Text style={styles.loadingSubtitle}>Caring for your pets, one pill at a time 🐾</Text>
     <ActivityIndicator size="large" color={COLORS.primary} style={styles.spinner} />
   </View>
 );
@@ -74,9 +83,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  loadingEmoji: {
-    fontSize: 64,
-    marginBottom: 16,
+  logoBadge: {
+    width: 96,
+    height: 96,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+    shadowColor: '#FF6B9D',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 16,
+    elevation: 12,
+  },
+  logoText: {
+    fontSize: 40,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    letterSpacing: 2,
   },
   loadingTitle: {
     fontSize: 36,
