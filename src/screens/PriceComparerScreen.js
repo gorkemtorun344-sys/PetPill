@@ -102,38 +102,49 @@ const PriceComparerScreen = ({ route }) => {
   }, [initialQuery, detectingLocation]);
 
   const detectLocation = async () => {
-    // 1. Language → country (instant, works in emulator/offline)
-    const LANG_TO_COUNTRY = { tr: 'TR', de: 'DE', fr: 'FR', ar: 'SA', en: 'US' };
+    // 1. IP geolocation first (most accurate, works even in emulator)
+    try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 5000);
+      let code = null;
+
+      try {
+        const res = await fetch('https://ip-api.com/json/?fields=countryCode', { signal: ctrl.signal });
+        if (res.ok) {
+          const data = await res.json();
+          code = data.countryCode;
+        }
+      } catch {
+        // Try second API with fresh controller
+        try {
+          const ctrl2 = new AbortController();
+          const timer2 = setTimeout(() => ctrl2.abort(), 3000);
+          const res2 = await fetch('https://ipapi.co/json/', { signal: ctrl2.signal });
+          if (res2.ok) {
+            const data2 = await res2.json();
+            code = data2.country_code;
+          }
+          clearTimeout(timer2);
+        } catch {}
+      }
+      clearTimeout(timer);
+
+      if (code && LOCATION_CONFIG[code.toUpperCase()]) {
+        setSelectedCountry(code.toUpperCase());
+        setDetectingLocation(false);
+        return;
+      }
+    } catch (e) {
+      console.log('IP geolocation failed:', e.message);
+    }
+
+    // 2. Fallback: Language → country
+    const LANG_TO_COUNTRY = { tr: 'TR', de: 'DE', fr: 'FR', ar: 'SA', en: 'GB' };
     const langCountry = LANG_TO_COUNTRY[language];
     if (langCountry && LOCATION_CONFIG[langCountry]) {
       setSelectedCountry(langCountry);
-      setDetectingLocation(false);
-      return;
     }
-
-    // 2. Fallback: IP geolocation (try two APIs with timeout)
-    try {
-      const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), 4000);
-      let code = null;
-      try {
-        const res = await fetch('https://ip-api.com/json/?fields=countryCode', { signal: ctrl.signal });
-        const data = await res.json();
-        code = data.countryCode;
-      } catch {
-        const res2 = await fetch('https://ipapi.co/json/', { signal: ctrl.signal });
-        const data2 = await res2.json();
-        code = data2.country_code;
-      }
-      clearTimeout(timer);
-      if (code && LOCATION_CONFIG[code.toUpperCase()]) {
-        setSelectedCountry(code.toUpperCase());
-      }
-    } catch (e) {
-      console.log('IP geolocation failed, using default:', e.message);
-    } finally {
-      setDetectingLocation(false);
-    }
+    setDetectingLocation(false);
   };
 
   const filteredSuggestions = searchQuery.length >= 2

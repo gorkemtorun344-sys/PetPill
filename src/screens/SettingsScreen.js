@@ -54,7 +54,7 @@ const SettingsScreen = ({ navigation }) => {
 
   const handleAddCaregiver = async () => {
     if (!cgName.trim()) {
-      Alert.alert(t('oops'), 'Please enter a name');
+      Alert.alert(t('oops'), t('settings_caregiver_name_required'));
       return;
     }
     try {
@@ -69,7 +69,7 @@ const SettingsScreen = ({ navigation }) => {
       setCgRelation('');
       setShowAddCaregiver(false);
       await loadCaregivers();
-      Alert.alert('Added! 👨‍👩‍👧', `${cgName} ${t('settings_caregiver_added')}`);
+      Alert.alert(t('settings_caregiver_added_title'), `${cgName} ${t('settings_caregiver_added')}`);
     } catch (e) { console.error(e); }
   };
 
@@ -114,12 +114,12 @@ const SettingsScreen = ({ navigation }) => {
 
   const handleExportData = () => {
     Alert.alert(
-      'Export Pet Data 📄',
-      'Generate a PDF report with all your pet\'s health data, medication history, and vaccination records. Perfect for vet visits!',
+      t('settings_export_title'),
+      t('settings_export_confirm'),
       [
         { text: t('cancel'), style: 'cancel' },
         {
-          text: '📄 Export PDF',
+          text: t('settings_export_pdf_btn'),
           onPress: () => Alert.alert(t('coming_soon'), t('settings_export_coming')),
         },
       ]
@@ -128,7 +128,7 @@ const SettingsScreen = ({ navigation }) => {
 
   const handleEmergency = () => {
     Alert.alert(
-      '🚨 Emergency Numbers',
+      t('settings_emergency_title'),
       t('settings_emergency_msg'),
       [
         { text: t('close') },
